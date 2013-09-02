@@ -10,7 +10,7 @@ This library is a C++ wrapper of OpenCL.  I built it to make prototyping OpenCL 
 **Compilation**
 ---------------
 
-Building jtil uses Visual Studio 2012 on Windows, and cmake + gcc 4.7 (or greater) on Mac OS X.  The only real dependancy is the jtil library.  See <https://github.com/jonathantompson/jtil> for more details.  You will also need a graphics card or CPU driver that supports OpenCL (some notes about this are here: JCL\_COMPILE\_NOTES.txt).
+Building jcl uses Visual Studio 2012 on Windows, and cmake + gcc 4.7 (or greater) on Mac OS X.  The only real dependancy is the jtil library.  See <https://github.com/jonathantompson/jtil> for more details.  You will also need a graphics card or CPU driver that supports OpenCL (some notes about this are here: JCL\_COMPILE\_NOTES.txt).
 
 VS2012 and cmake expect a specific directory structure:
 
