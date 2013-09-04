@@ -130,11 +130,10 @@ message( "EXTRA_LIBS to be linked in: " ${EXTRA_LIBS} )
 
 add_library(${TARGET_NAME} STATIC ${JCL_CXX_SOURCE} ${JCL_CC_SOURCE} ${JCL_HEADER})
 
-set(BUILD_JTIL_TESTS false)
-# subdirectories that are NOT in the current directory tree, you must specify
-# a build directory.  The build directories here will build a local copy of the
-# jtil and jcl libraries (this is OK, it just wastes disk space).
-add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/../jtil/" "${CMAKE_CURRENT_BINARY_DIR}/jtil")
+if(NOT DEFINED jtil)
+  set(BUILD_JTIL_TESTS false)
+  add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/../jtil/" "${CMAKE_CURRENT_BINARY_DIR}/jtil")
+endif()
 
 target_link_libraries(${TARGET_NAME} ${EXTRA_LIBS})
 if(BUILD MATCHES debug)
