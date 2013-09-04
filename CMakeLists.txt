@@ -130,7 +130,7 @@ message( "EXTRA_LIBS to be linked in: " ${EXTRA_LIBS} )
 
 add_library(${TARGET_NAME} STATIC ${JCL_CXX_SOURCE} ${JCL_CC_SOURCE} ${JCL_HEADER})
 
-if(NOT DEFINED jtil)
+if(NOT TARGET jtil)
   set(BUILD_JTIL_TESTS false)
   add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/../jtil/" "${CMAKE_CURRENT_BINARY_DIR}/jtil")
 endif()
