@@ -1,5 +1,17 @@
 project(jcl)
-set(CMAKE_VERBOSE_MAKEFILE root_VERBOSE_MAKEFILE)
+if(DEFINED root_VERBOSE_MAKEFILE)
+  set(CMAKE_VERBOSE_MAKEFILE root_VERBOSE_MAKEFILE)
+else()
+  set(CMAKE_VERBOSE_MAKEFILE true) # Default to verbose
+endif()
+
+if(NOT DEFINED BUILD)
+  if(DEFINED CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE MATCHES DEBUG OR CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES debug))
+    set(BUILD debug)
+  else()
+    set(BUILD release) # default to release
+  endif()
+endif()
 cmake_minimum_required(VERSION 2.8.10)
 
 message("*************************************************")
@@ -118,9 +130,22 @@ message( "EXTRA_LIBS to be linked in: " ${EXTRA_LIBS} )
 
 add_library(${TARGET_NAME} STATIC ${JCL_CXX_SOURCE} ${JCL_CC_SOURCE} ${JCL_HEADER})
 
+set(BUILD_JTIL_TESTS false)
+# subdirectories that are NOT in the current directory tree, you must specify
+# a build directory.  The build directories here will build a local copy of the
+# jtil and jcl libraries (this is OK, it just wastes disk space).
+add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/../jtil/" "${CMAKE_CURRENT_BINARY_DIR}/jtil")
+
 target_link_libraries(${TARGET_NAME} ${EXTRA_LIBS})
 if(BUILD MATCHES debug)
     target_link_libraries(${TARGET_NAME} jtil_d)
 else()
     target_link_libraries(${TARGET_NAME} jtil)
+endif()
+
+if(DEFINED BUILD_JCL_TESTS AND (BUILD_JCL_TESTS MATCHES false))
+  message("Not building the jcl tests...")
+else()
+  message("building the jcl tests...")
+  add_subdirectory(tests_jcl) # default to building the tests
 endif()
