@@ -87,9 +87,12 @@ namespace jcl {
       if (!strict_float) {
 #if !defined(__APPLE__)
         options = "-Werror -cl-mad-enable -cl-fast-relaxed-math "
-          "-cl-no-signed-zeros";
+          "-cl-no-signed-zeros -cl-denorms-are-zero "
+          "-cl-unsafe-math-optimizations";
 #else
-        options = "-cl-mad-enable -cl-fast-relaxed-math -cl-no-signed-zeros";
+        options = "-cl-mad-enable -cl-fast-relaxed-math -cl-no-signed-zeros "
+                  "-cl-auto-vectorize-enable -cl-denorms-are-zero "
+                  "-cl-unsafe-math-optimizations";
 #endif
       }
       if (options != NULL) {
