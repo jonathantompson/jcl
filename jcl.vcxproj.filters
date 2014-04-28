@@ -36,6 +36,12 @@
     <Filter Include="Source Files\jcl\string_util">
       <UniqueIdentifier>{9a53f332-2a6c-4da2-8dcb-7cc2b6dba6e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\jcl\threading">
+      <UniqueIdentifier>{d6b5ab1d-723d-4621-b45a-04d8e7344129}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\jcl\threading">
+      <UniqueIdentifier>{3d13e2d6-19d4-46a9-8c51-10bc5738af73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\jcl\cl_include.h">
@@ -95,6 +101,24 @@
     <ClInclude Include="include\jcl\string_util\md5_jcl.h">
       <Filter>Header Files\jcl\string_util</Filter>
     </ClInclude>
+    <ClInclude Include="include\jcl\threading\callback_instances.h">
+      <Filter>Header Files\jcl\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\threading\callback.h">
+      <Filter>Header Files\jcl\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\threading\thread_pool.h">
+      <Filter>Header Files\jcl\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\threading\callback_queue.h">
+      <Filter>Header Files\jcl\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\threading\callback_queue_item.h">
+      <Filter>Header Files\jcl\threading</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\threading\thread.h">
+      <Filter>Header Files\jcl\threading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\jcl\opencl_buffer_data.cpp">
@@ -121,8 +145,17 @@
     <ClCompile Include="src\jcl\string_util\md5c_jcl.c">
       <Filter>Source Files\jcl\string_util</Filter>
     </ClCompile>
+    <ClCompile Include="src\jcl\threading\thread_pool.cpp">
+      <Filter>Source Files\jcl\threading</Filter>
+    </ClCompile>
+    <ClCompile Include="src\jcl\threading\thread.cpp">
+      <Filter>Source Files\jcl\threading</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="include\jcl\threading\callback_instances.py">
+      <Filter>Header Files\jcl\threading</Filter>
+    </None>
   </ItemGroup>
 </Project>

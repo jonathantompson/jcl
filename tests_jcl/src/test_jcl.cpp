@@ -8,6 +8,11 @@
 #include "test_unit/test_unit.h"
 #include "test_unit/test_util.h"
 
+#include "test_callback.h"
+#include "test_callback_queue.h"
+#include "test_thread.h"
+#include "test_thread_pool.h"
+
 #include "test_convolution.h"
 
 #include "debug_util.h"  // Must come last in .cpp with main

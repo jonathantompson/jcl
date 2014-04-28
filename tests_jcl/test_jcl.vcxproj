@@ -103,7 +103,11 @@
   <ItemGroup>
     <ClInclude Include="headers\clk\clk.h" />
     <ClInclude Include="headers\debug_util.h" />
+    <ClInclude Include="headers\test_callback.h" />
+    <ClInclude Include="headers\test_callback_queue.h" />
     <ClInclude Include="headers\test_convolution.h" />
+    <ClInclude Include="headers\test_thread.h" />
+    <ClInclude Include="headers\test_thread_pool.h" />
     <ClInclude Include="headers\test_unit\log_message.h" />
     <ClInclude Include="headers\test_unit\log_writer.h" />
     <ClInclude Include="headers\test_unit\param_map.h" />

@@ -44,6 +44,18 @@
     <ClInclude Include="headers\clk\clk.h">
       <Filter>Header Files\clk</Filter>
     </ClInclude>
+    <ClInclude Include="headers\test_thread_pool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\test_callback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\test_callback_queue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\test_thread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\test_jcl.cpp">

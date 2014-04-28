@@ -135,6 +135,12 @@
     <ClInclude Include="include\jcl\opencl_program.h" />
     <ClInclude Include="include\jcl\string_util\macros.h" />
     <ClInclude Include="include\jcl\string_util\md5_jcl.h" />
+    <ClInclude Include="include\jcl\threading\callback.h" />
+    <ClInclude Include="include\jcl\threading\callback_instances.h" />
+    <ClInclude Include="include\jcl\threading\callback_queue.h" />
+    <ClInclude Include="include\jcl\threading\callback_queue_item.h" />
+    <ClInclude Include="include\jcl\threading\thread.h" />
+    <ClInclude Include="include\jcl\threading\thread_pool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\jcl\data_str\hash_funcs.cpp" />
@@ -148,8 +154,11 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
     </ClCompile>
+    <ClCompile Include="src\jcl\threading\thread.cpp" />
+    <ClCompile Include="src\jcl\threading\thread_pool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="include\jcl\threading\callback_instances.py" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
