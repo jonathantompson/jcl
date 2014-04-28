@@ -94,9 +94,11 @@ namespace jcl {
                   "-cl-unsafe-math-optimizations";
 #endif
       }
+#if defined(DEBUG) || defined(_DEBUG)
       if (options != NULL) {
         std::cout << "\t --> With options: " << options << std::endl;
       }
+#endif
       program_.build(devices, options);
       std::cout << "\t --> Finished building program" << std::endl;
     } catch (cl::Error err) {
