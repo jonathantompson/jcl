@@ -150,9 +150,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="JCL_COMPILE_NOTES.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="JCL_COMPILE_NOTES.md" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

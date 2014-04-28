@@ -14,7 +14,7 @@ Building jcl uses Visual Studio 2012 on Windows, and cmake + gcc 4.7 (or greater
 
 You will also need a graphics card or CPU driver that supports OpenCL.
 
-For notes on installing the dependencies for jcl, see here: JCL\_COMPILE\_NOTES.txt.
+For notes on installing the dependencies for jcl, see here: JCL\_COMPILE\_NOTES.md.
 
 **Style**
 ---------
