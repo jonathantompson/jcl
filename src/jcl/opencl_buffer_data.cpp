@@ -2,14 +2,12 @@
 #include <iostream>
 #include "jcl/opencl_context.h"
 #include "jcl/opencl_buffer_data.h"
-#include "jtil/exceptions/wruntime_error.h"
-
 #define SAFE_DELETE(x) if (x != NULL) { delete x; x = NULL; }
 #define SAFE_FREE(x) if (x != NULL) { free(x); x = NULL; }
 #define SAFE_DELETE_ARR(x) if (x != NULL) { delete[] x; x = NULL; }
 
-using namespace jtil::data_str;
-using std::wruntime_error;
+using namespace jcl::data_str;
+using std::runtime_error;
 using std::cout;
 using std::endl;
 
@@ -31,7 +29,7 @@ namespace jcl {
       flags |= CL_MEM_READ_WRITE;
       break;
     default:
-      throw std::wruntime_error("OpenCLBufferData::OpenCLBufferData() - "
+      throw runtime_error("OpenCLBufferData::OpenCLBufferData() - "
         "ERROR: Memory type not supported!");
     }
     buffer = cl::Buffer(context, flags, sizeof(cl_float) * w * h * d);

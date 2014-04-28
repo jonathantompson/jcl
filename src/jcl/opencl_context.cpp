@@ -1,23 +1,22 @@
 #include <sstream>
 #include <iostream>
-#include "jtil/data_str/hash_funcs.h"
+#include "jcl/data_str/hash_funcs.h"
 #include "jcl/jcl.h"
 #include "jcl/opencl_context.h"
 #include "jcl/opencl_program.h"
 #include "jcl/opencl_kernel.h"
 #include "jcl/opencl_buffer_data.h"
-#include "jtil/exceptions/wruntime_error.h"
 extern "C" {
-#include "jtil/string_util/md5.h"
+#include "jcl/string_util/md5_jcl.h"
 }
 
 #define SAFE_DELETE(x) if (x != NULL) { delete x; x = NULL; }
 #define SAFE_FREE(x) if (x != NULL) { free(x); x = NULL; }
 #define SAFE_DELETE_ARR(x) if (x != NULL) { delete[] x; x = NULL; }
 
-using namespace jtil::data_str;
-using namespace jtil::math;
-using std::wruntime_error;
+using namespace jcl::data_str;
+using namespace jcl::math;
+using std::runtime_error;
 using std::cout;
 using std::endl;
 using std::string;
@@ -56,7 +55,7 @@ namespace jcl {
     const CLVendor vendor) {
     cl::Platform platform; 
     if ( !getPlatform(device, vendor, platform) ) {
-      throw std::wruntime_error("No OpenCL platforms were found");
+      throw runtime_error("No OpenCL platforms were found");
     }
 
     // Use the preferred platform and create a context
@@ -67,7 +66,7 @@ namespace jcl {
     try {
       context = cl::Context(device_cl, cps);
     } catch (cl::Error err) {
-      throw wruntime_error(string("cl::Context() failed: ") + 
+      throw runtime_error(string("cl::Context() failed: ") + 
         GetCLErrorString(err));
     }
     cout << "Created OpenCL Context: " << endl;
@@ -79,12 +78,12 @@ namespace jcl {
     try {
       devices = context.getInfo<CL_CONTEXT_DEVICES>();
     } catch (cl::Error err) {
-      throw wruntime_error(string("context.getInfo() failed: ") + 
+      throw runtime_error(string("context.getInfo() failed: ") + 
         GetCLErrorString(err));
     }
 
     if (devices.size() <= 0) {
-      throw std::wruntime_error("OpenCLContext::getDevice() - ERROR: "
+      throw runtime_error("OpenCLContext::getDevice() - ERROR: "
         "No devices are attached to the current context!");
     }
 
@@ -93,11 +92,11 @@ namespace jcl {
     for (uint32_t i = 0; i < devices.size(); i++) {
       try {
         if (devices[i].getInfo<CL_DEVICE_TYPE>() != device_cl) {
-          throw wruntime_error("OpenCLContext::InitDevices() - INTERNAL ERROR:"
+          throw runtime_error("OpenCLContext::InitDevices() - INTERNAL ERROR:"
             " Incorrect device type found!");
         }
       } catch (cl::Error err) {
-        throw wruntime_error(string("devices[cur_device].getInfo() failed: ") + 
+        throw runtime_error(string("devices[cur_device].getInfo() failed: ") + 
           GetCLErrorString(err));
       }
     }
@@ -117,14 +116,14 @@ namespace jcl {
                 endl;
         cout << " - device " << i << " CL_DEVICE_MAX_WORK_GROUP_SIZE: ";
         size_t max_size = devices[i].getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
-        devices_max_workgroup_size.pushBack((int)max_size);
-        cout << devices_max_workgroup_size[i] << endl;
+        devices_max_workgroup_size_.pushBack((int)max_size);
+        cout << devices_max_workgroup_size_[i] << endl;
         cout << " - device " << i << " CL_DEVICE_GLOBAL_MEM_SIZE: ";
         cout << devices[i].getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << endl;
         cout << " - device " << i << " CL_DEVICE_MAX_WORK_ITEM_SIZES: ";
         std::vector<size_t> item_sizes =
                 devices[i].getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
-        devices_max_workitem_size.pushBack(Int3((int32_t)item_sizes[0], 
+        devices_max_workitem_size_.pushBack(Int3((int32_t)item_sizes[0], 
           (int32_t)item_sizes[1], (int32_t)item_sizes[2]));
         std::cout << "(i=2) ";
         for (int32_t j = 2; j >= 0; j--) {
@@ -135,7 +134,7 @@ namespace jcl {
 
       }
     } catch (cl::Error err) {
-      throw wruntime_error(string("devices[cur_device].getInfo() failed: ") + 
+      throw runtime_error(string("devices[cur_device].getInfo() failed: ") + 
         GetCLErrorString(err));
     }
   }
@@ -146,7 +145,7 @@ namespace jcl {
         queues.push_back(cl::CommandQueue(context, devices[i]));
       }
     } catch (cl::Error err) {
-      throw wruntime_error(string("cl::CommandQueue() failed: ") + 
+      throw runtime_error(string("cl::CommandQueue() failed: ") + 
         GetCLErrorString(err));
     }
   }
@@ -156,12 +155,12 @@ namespace jcl {
   }
 
   uint32_t OpenCLContext::getMaxWorkgroupSize(const uint32_t i) {
-    return devices_max_workgroup_size[i];
+    return devices_max_workgroup_size_[i];
   }
 
   void OpenCLContext::getMaxWorkitemSizes(const uint32_t i, 
     Int3& max_device_item_sizes) {
-    max_device_item_sizes.set(devices_max_workitem_size[i]);
+    max_device_item_sizes.set(devices_max_workitem_size_[i]);
   }
 
   std::string OpenCLContext::getDeviceName(const uint32_t device_index) {
@@ -169,7 +168,7 @@ namespace jcl {
     try {
       name = devices[device_index].getInfo<CL_DEVICE_NAME>();
     } catch (cl::Error err) {
-      throw wruntime_error(string("devices[]::getInfo() failed: ") + 
+      throw runtime_error(string("devices[]::getInfo() failed: ") + 
         GetCLErrorString(err));
     }
     return name;
@@ -180,7 +179,7 @@ namespace jcl {
     try {
       type = devices[device_index].getInfo<CL_DEVICE_TYPE>();
     } catch (cl::Error err) {
-      throw wruntime_error(string("devices[]::getInfo() failed: ") + 
+      throw runtime_error(string("devices[]::getInfo() failed: ") + 
         GetCLErrorString(err));
     }
     return CLDeviceType2CLDevice(type);
@@ -237,7 +236,7 @@ namespace jcl {
       return_platform = platforms[platformID];
       return true;
     } catch (cl::Error err) {
-      throw wruntime_error(string("Platform query failed: ") + 
+      throw runtime_error(string("Platform query failed: ") + 
         GetCLErrorString(err));
     }
   }
@@ -248,7 +247,7 @@ namespace jcl {
       std::stringstream ss;
       ss << "OpenCLContext::CheckError() - ERROR: ";
       ss << GetCLErrorString(err_code);
-      throw std::wruntime_error(ss.str());
+      throw std::runtime_error(ss.str());
     }
 #endif
   }
@@ -290,7 +289,7 @@ namespace jcl {
       buffers->pushBack(new OpenCLBufferData(type, w, h, d, context));
       return (JCLBuffer)(buffers->size() - 1);
     } catch (cl::Error err) {
-      throw wruntime_error(string("allocateBuffer error: ") + 
+      throw runtime_error(string("allocateBuffer error: ") + 
         GetCLErrorString(err));
     }
   }
@@ -321,7 +320,7 @@ namespace jcl {
     // This is a little expensive, but compute the md5 of the kernel_c_str
     // and use this as the "filename"
     unsigned char md5_kernel_c_str[16];
-    MD5CStr(kernel_c_str, md5_kernel_c_str);
+    MD5JCLCStr(kernel_c_str, md5_kernel_c_str);
     std::string filename((char*)md5_kernel_c_str);
     
     // Make sure the program is compiled
@@ -345,7 +344,7 @@ namespace jcl {
 
   void OpenCLContext::setArg(const uint32_t index, const JCLBuffer val) {
     if (!cur_kernel_) {
-      throw std::wruntime_error("OpenCLContext::setArg() - ERROR: You must "
+      throw std::runtime_error("OpenCLContext::setArg() - ERROR: You must "
         "call OpenCL::useKernel() first!");
     }
     cur_kernel_->setArg(index, (*buffers)[(uint32_t)val]->buffer);
@@ -354,7 +353,7 @@ namespace jcl {
   void OpenCLContext::setArg(const uint32_t index, const uint32_t size,
     void* data) {
     if (!cur_kernel_) {
-      throw std::wruntime_error("OpenCLContext::setArgNull() - ERROR: You must"
+      throw std::runtime_error("OpenCLContext::setArgNull() - ERROR: You must"
         " call OpenCL::useKernel() first!");
     }
     cur_kernel_->setArg(index, size, data);
@@ -363,13 +362,13 @@ namespace jcl {
   void OpenCLContext::sync(const uint32_t device_index) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("sync() - ERROR: Invalid device_index");
+      throw std::runtime_error("sync() - ERROR: Invalid device_index");
     }
 #endif
     try {
       queues[device_index].finish();
     } catch (cl::Error err) {
-      throw wruntime_error(string("queues[device_index].finish() failed: ") + 
+      throw runtime_error(string("queues[device_index].finish() failed: ") + 
         GetCLErrorString(err));
     }
   }
@@ -377,11 +376,11 @@ namespace jcl {
   int32_t OpenCLContext::queryMaxWorkgroupSizeForCurKernel(
     const uint32_t device_index) {
     if (cur_kernel_ == NULL) {
-      throw std::wruntime_error("queryMaxWorkgroupSizeForCurKernel() - ERROR: "
+      throw std::runtime_error("queryMaxWorkgroupSizeForCurKernel() - ERROR: "
         "Please call OpenCL::useKernel() first!");
     }
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("queryMaxWorkgroupSizeForCurKernel() - ERROR: "
+      throw std::runtime_error("queryMaxWorkgroupSizeForCurKernel() - ERROR: "
         "Invalid device_index");
     }
 
@@ -389,7 +388,7 @@ namespace jcl {
     cl_int rc = cur_kernel_->kernel().getWorkGroupInfo<size_t>(
       devices[device_index], CL_KERNEL_WORK_GROUP_SIZE, &max_workgroup_size);
     if (rc != CL_SUCCESS) {
-      throw std::wruntime_error("queryMaxWorkgroupSizeForCurKernel() - ERROR: "
+      throw std::runtime_error("queryMaxWorkgroupSizeForCurKernel() - ERROR: "
         "Failed querying the max workgroup size for this kernel and device!");
     }
     return (int32_t)max_workgroup_size;
@@ -400,28 +399,28 @@ namespace jcl {
     const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw std::runtime_error("runKernelxD() - ERROR: Invalid "
         "device_index");
     }
     if (cur_kernel_ == NULL) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Please call "
+      throw std::runtime_error("runKernelxD() - ERROR: Please call "
         "OpenCL::useKernel() first!");
     }
     if ((global_work_size % local_work_size) != 0) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Global workgroup"
+      throw std::runtime_error("runKernelxD() - ERROR: Global workgroup"
         " size is not evenly divisible by the local work group size!");
     }
-    if (local_work_size > (int)devices_max_workgroup_size[device_index]) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Local workgroup"
+    if (local_work_size > (int)devices_max_workgroup_size_[device_index]) {
+      throw std::runtime_error("runKernelxD() - ERROR: Local workgroup"
         " size is greater than CL_DEVICE_MAX_WORK_GROUP_SIZE!");
     }
-    if (local_work_size > (int)devices_max_workitem_size[device_index][0]) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Local workgroup"
-        " size is greater than devices_max_workitem_size[0]!");
+    if (local_work_size > (int)devices_max_workitem_size_[device_index][0]) {
+      throw std::runtime_error("runKernelxD() - ERROR: Local workgroup"
+        " size is greater than devices_max_workitem_size_[0]!");
     }
     int32_t max_size = queryMaxWorkgroupSizeForCurKernel(device_index);
     if (local_work_size > (int)max_size) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Local workgroup"
+      throw std::runtime_error("runKernelxD() - ERROR: Local workgroup"
         " size is greater than CL_KERNEL_WORK_GROUP_SIZE!");
     }
 #endif
@@ -436,7 +435,7 @@ namespace jcl {
       queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
         offset, global_work, local_work, NULL, &cur_event);
     } catch (cl::Error err) {
-      throw wruntime_error(string("enqueueNDRangeKernel failed: ") + 
+      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
     }
 
@@ -450,33 +449,33 @@ namespace jcl {
     const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw runtime_error("runKernelxD() - ERROR: Invalid "
         "device_index");
     }
     if (cur_kernel_ == NULL) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Please call "
+      throw runtime_error("runKernelxD() - ERROR: Please call "
         "OpenCL::useKernel() first!");
     }
     if ((global_work_size[1] % local_work_size[1]) != 0 ||
       (global_work_size[0] % local_work_size[0]) != 0) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Global workgroup"
+      throw runtime_error("runKernelxD() - ERROR: Global workgroup"
         " size is not evenly divisible by the local work group size!");
     }
     int32_t total_worksize = local_work_size[0] * local_work_size[1];
-    if (total_worksize > devices_max_workgroup_size[device_index]) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Local workgroup"
+    if (total_worksize > devices_max_workgroup_size_[device_index]) {
+      throw runtime_error("runKernelxD() - ERROR: Local workgroup"
         " size is greater than CL_DEVICE_MAX_WORK_GROUP_SIZE!");
     }
     for (uint32_t i = 0; i < 2; i++) {
       if (local_work_size[i] >
-          (int)devices_max_workitem_size[device_index][i]) {
-        throw std::wruntime_error("runKernelxD() - ERROR: A Local workgroup"
-          " size is greater than devices_max_workitem_size!");
+          (int)devices_max_workitem_size_[device_index][i]) {
+        throw runtime_error("runKernelxD() - ERROR: A Local workgroup"
+          " size is greater than devices_max_workitem_size_!");
       }
     }
     int32_t max_size = queryMaxWorkgroupSizeForCurKernel(device_index);
     if (total_worksize > (int)max_size) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Local workgroup"
+      throw runtime_error("runKernelxD() - ERROR: Local workgroup"
         " size is greater than CL_KERNEL_WORK_GROUP_SIZE!");
     }
 #endif
@@ -492,7 +491,7 @@ namespace jcl {
         global_work[1] << ", " << global_work[0] << "] (i=0), " <<
         "local_work = [" << local_work[1] << ", " << local_work[0] << "] (i=0)"
         << std::endl;
-      throw wruntime_error(string("enqueueNDRangeKernel failed: ") + 
+      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
     }
 
@@ -506,35 +505,35 @@ namespace jcl {
     const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw runtime_error("runKernelxD() - ERROR: Invalid "
         "device_index");
     }
     if (cur_kernel_ == NULL) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Please call "
+      throw runtime_error("runKernelxD() - ERROR: Please call "
         "OpenCL::useKernel() first!");
     }
     if ((global_work_size[2] % local_work_size[2]) != 0 ||
       (global_work_size[1] % local_work_size[1]) != 0 ||
       (global_work_size[0] % local_work_size[0]) != 0) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Global workgroup"
+      throw runtime_error("runKernelxD() - ERROR: Global workgroup"
         " size is not evenly divisible by the local work group size!");
     }
     int32_t total_worksize = local_work_size[0] * local_work_size[1] *
       local_work_size[2];
-    if (total_worksize > devices_max_workgroup_size[device_index]) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Local workgroup"
+    if (total_worksize > devices_max_workgroup_size_[device_index]) {
+      throw runtime_error("runKernelxD() - ERROR: Local workgroup"
         " size is greater than CL_DEVICE_MAX_WORK_GROUP_SIZE!");
     }
     for (uint32_t i = 0; i < 3; i++) {
       if (local_work_size[i] >
-          (int)devices_max_workitem_size[device_index][i]) {
-        throw std::wruntime_error("runKernelxD() - ERROR: A Local workgroup"
-          " size is greater than devices_max_workitem_size!");
+          (int)devices_max_workitem_size_[device_index][i]) {
+        throw runtime_error("runKernelxD() - ERROR: A Local workgroup"
+          " size is greater than devices_max_workitem_size_!");
       }
     }
     int32_t max_size = queryMaxWorkgroupSizeForCurKernel(device_index);
     if (total_worksize > (int)max_size) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Local workgroup"
+      throw runtime_error("runKernelxD() - ERROR: Local workgroup"
         " size is greater than CL_KERNEL_WORK_GROUP_SIZE!");
     }
 #endif
@@ -552,7 +551,7 @@ namespace jcl {
         global_work[2] << ", " << global_work[1] << ", " << global_work[0] <<
         "] (i=0), " << "local_work = [" << local_work[2] << ", " <<
         local_work[1] << ", " << local_work[0] << "] (i=0)" << std::endl;
-      throw wruntime_error(string("enqueueNDRangeKernel failed: ") + 
+      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
     }
 
@@ -565,8 +564,8 @@ namespace jcl {
     const uint32_t device_index, const int global_workgroup, 
     int& local_workgroup) {
     local_workgroup = std::min<int>(global_workgroup, 
-      std::min<int>(devices_max_workgroup_size[device_index],
-      devices_max_workitem_size[device_index][0]));
+      std::min<int>(devices_max_workgroup_size_[device_index],
+      devices_max_workitem_size_[device_index][0]));
     // Find the smallest divisor: Might be slow if global_workgroup is prime
     while (local_workgroup > 1 && global_workgroup % local_workgroup != 0) {
       local_workgroup--;
@@ -577,11 +576,11 @@ namespace jcl {
     const int global_work_size, const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw runtime_error("runKernelxD() - ERROR: Invalid "
         "device_index");
     }
     if (cur_kernel_ == NULL) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Please call "
+      throw runtime_error("runKernelxD() - ERROR: Please call "
         "OpenCL::useKernel() first!");
     }
 #endif
@@ -595,7 +594,7 @@ namespace jcl {
     } catch (cl::Error err) {
       std::cout << "runKernel error occured, global_work = [" << global_work[0]
         << "] (i=0)," << std::endl;
-      throw wruntime_error(string("enqueueNDRangeKernel failed: ") + 
+      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
     }
 
@@ -608,11 +607,11 @@ namespace jcl {
     const Int2& global_work_size, const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw runtime_error("runKernelxD() - ERROR: Invalid "
         "device_index");
     }
     if (cur_kernel_ == NULL) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Please call "
+      throw runtime_error("runKernelxD() - ERROR: Please call "
         "OpenCL::useKernel() first!");
     }
 #endif
@@ -626,7 +625,7 @@ namespace jcl {
     } catch (cl::Error err) {
       std::cout << "runKernel error occured, global_work = [" << global_work[1]
         << ", " << global_work[0] << "] (i=0)," << std::endl;
-      throw wruntime_error(string("enqueueNDRangeKernel failed: ") + 
+      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
     }
 
@@ -639,11 +638,11 @@ namespace jcl {
     const Int3& global_work_size, const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw runtime_error("runKernelxD() - ERROR: Invalid "
         "device_index");
     }
     if (cur_kernel_ == NULL) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Please call "
+      throw runtime_error("runKernelxD() - ERROR: Please call "
         "OpenCL::useKernel() first!");
     }
 #endif
@@ -659,7 +658,7 @@ namespace jcl {
       std::cout << "runKernel error occured, global_work = [" <<
         global_work[2] << ", " << global_work[1] << ", " << global_work[0] <<
         "] (i=0)," << std::endl;
-      throw wruntime_error(string("enqueueNDRangeKernel failed: ") + 
+      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
     }
 
@@ -684,7 +683,7 @@ namespace jcl {
       str = "Intel";
       break;
     default:
-      throw std::wruntime_error("Invalid vendor specified");
+      throw runtime_error("Invalid vendor specified");
       break;
     }
     return str;
@@ -709,7 +708,7 @@ namespace jcl {
       ret = CL_DEVICE_TYPE_ALL;
       break;
     default:
-      throw std::wruntime_error("CLDevice2CLDeviceType() ERROR: Invalid "
+      throw runtime_error("CLDevice2CLDeviceType() ERROR: Invalid "
         "enumerant!");
     }
     return ret;
@@ -734,7 +733,7 @@ namespace jcl {
       ret = CLDeviceAll;
       break;
     default:
-      throw std::wruntime_error("CLDeviceType2CLDevice() ERROR: Invalid "
+      throw runtime_error("CLDeviceType2CLDevice() ERROR: Invalid "
         "enumerant!");
     }
     return ret;

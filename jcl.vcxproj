@@ -52,7 +52,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\jtil\include;"$(OPENCL_INC_DIR)"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(OPENCL_INC_DIR)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996; 4290</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PreprocessorDefinitions>BREAK_ON_EXCEPTION_INT;FREEIMAGE_LIB;GLEW_STATIC;UNICODE;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -85,7 +85,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)..\jtil\include;"$(OPENCL_INC_DIR)"</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(OPENCL_INC_DIR)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996; 4290</DisableSpecificWarnings>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PreprocessorDefinitions>BREAK_ON_EXCEPTION_INT;FREEIMAGE_LIB;GLEW_STATIC;UNICODE;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -116,22 +116,44 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\jcl\alignment\data_align.h" />
     <ClInclude Include="include\jcl\cl_include.h" />
+    <ClInclude Include="include\jcl\data_str\hash_funcs.h" />
+    <ClInclude Include="include\jcl\data_str\hash_map_managed.h" />
+    <ClInclude Include="include\jcl\data_str\pair.h" />
+    <ClInclude Include="include\jcl\data_str\vector.h" />
+    <ClInclude Include="include\jcl\data_str\vector_managed.h" />
     <ClInclude Include="include\jcl\jcl.h" />
+    <ClInclude Include="include\jcl\math\int_types.h" />
+    <ClInclude Include="include\jcl\math\math_base.h" />
+    <ClInclude Include="include\jcl\math\math_types.h" />
+    <ClInclude Include="include\jcl\math\vec2.h" />
+    <ClInclude Include="include\jcl\math\vec3.h" />
     <ClInclude Include="include\jcl\opencl_buffer_data.h" />
     <ClInclude Include="include\jcl\opencl_context.h" />
     <ClInclude Include="include\jcl\opencl_kernel.h" />
     <ClInclude Include="include\jcl\opencl_program.h" />
+    <ClInclude Include="include\jcl\string_util\macros.h" />
+    <ClInclude Include="include\jcl\string_util\md5_jcl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\jcl\data_str\hash_funcs.cpp" />
     <ClCompile Include="src\jcl\jcl.cpp" />
+    <ClCompile Include="src\jcl\math\math_base.cpp" />
     <ClCompile Include="src\jcl\opencl_buffer_data.cpp" />
     <ClCompile Include="src\jcl\opencl_context.cpp" />
     <ClCompile Include="src\jcl\opencl_kernel.cpp" />
     <ClCompile Include="src\jcl\opencl_program.cpp" />
+    <ClCompile Include="src\jcl\string_util\md5c_jcl.c">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="JCL_COMPILE_NOTES.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

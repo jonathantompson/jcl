@@ -2,14 +2,13 @@
 #include "jcl/opencl_program.h"
 #include "jcl/jcl.h"
 #include "jcl/opencl_context.h"
-#include "jtil/exceptions/wruntime_error.h"
 
 #define SAFE_DELETE(x) if (x != NULL) { delete x; x = NULL; }
 #define SAFE_FREE(x) if (x != NULL) { free(x); x = NULL; }
 #define SAFE_DELETE_ARR(x) if (x != NULL) { delete[] x; x = NULL; }
 
 using std::string;
-using std::wruntime_error;
+using std::runtime_error;
 
 namespace jcl {
 
@@ -49,7 +48,7 @@ namespace jcl {
     if (!fptr) {
       string err = string("Renderer::readFileToBuffer() - ERROR: could not"
         " open file (") + filename + ") for reading";
-      throw wruntime_error(err);
+      throw runtime_error(err);
     }
     fseek(fptr, 0, SEEK_END);  // Seek to the end of the file
     length = ftell(fptr);  // Find out how many bytes into the file we are
@@ -71,7 +70,7 @@ namespace jcl {
       cl::Program::Sources source(1, std::make_pair(code_, strlen(code_)));
       program_ = cl::Program(context, source);
     } catch (cl::Error err) {
-      throw wruntime_error(string("cl::Program() failed: ") + 
+      throw runtime_error(string("cl::Program() failed: ") + 
         OpenCLContext::GetCLErrorString(err));
     }
 
@@ -108,7 +107,7 @@ namespace jcl {
         std::cout << "ERROR: program_.build() failed." << std::endl;
         std::cout << "    Program Info: " << str << std::endl;
       // }
-      throw wruntime_error(string("program_.build() failed: ") + 
+      throw runtime_error(string("program_.build() failed: ") + 
         OpenCLContext::GetCLErrorString(err));
     }
   }

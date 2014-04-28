@@ -2,16 +2,15 @@
 #include "jcl/cl_include.h"
 #include "jcl/jcl.h"
 #include "jcl/opencl_context.h"
-#include "jtil/exceptions/wruntime_error.h"
 
 #define SAFE_DELETE(x) if (x != NULL) { delete x; x = NULL; }
 #define SAFE_DELETE_ARR(x) if (x != NULL) { delete[] x; x = NULL; }
 
-using std::wruntime_error;
+using std::runtime_error;
 using std::string;
 using std::cout;
 using std::endl;
-using namespace jtil::math;
+using namespace jcl::math;
 
 namespace jcl {
 
@@ -59,7 +58,7 @@ namespace jcl {
   }
 
   void JCL::getMaxWorkitemSizes(const uint32_t device_index, 
-    jtil::math::Int3& max_device_item_sizes) {
+    jcl::math::Int3& max_device_item_sizes) {
     context_->getMaxWorkitemSizes(device_index, max_device_item_sizes);
   }
 

@@ -18,7 +18,7 @@
 
 #include <string>
 #include <mutex>
-#include "jtil/math/math_types.h"
+#include "jcl/math/math_types.h"
 
 namespace jcl {
 
@@ -63,7 +63,7 @@ namespace jcl {
     CLDevice getDeviceType(const uint32_t device_index);
     uint32_t getMaxWorkgroupSize(const uint32_t device_index);
     void getMaxWorkitemSizes(const uint32_t device_index,
-      jtil::math::Int3& max_device_item_sizes);
+      jcl::math::Int3& max_device_item_sizes);
 
     // allocateBuffer - Maps a new OpenCL buffer to the user memory at data
     JCLBuffer allocateBuffer(const CLBufferType type, const uint32_t w, 
@@ -108,18 +108,18 @@ namespace jcl {
     void runKernel1D(const uint32_t device_index, const int global_work_size, 
       const int local_work_size, const bool blocking);
     void runKernel2D(const uint32_t device_index, 
-      const jtil::math::Int2& global_work_size, 
-      const jtil::math::Int2& local_work_size, const bool blocking);
+      const jcl::math::Int2& global_work_size, 
+      const jcl::math::Int2& local_work_size, const bool blocking);
     void runKernel3D(const uint32_t device_index, 
-      const jtil::math::Int3& global_work_size, 
-      const jtil::math::Int3& local_work_size, const bool blocking);
+      const jcl::math::Int3& global_work_size, 
+      const jcl::math::Int3& local_work_size, const bool blocking);
     // Run commands to let OpenCL choose the local workgroup size:
     void runKernel1D(const uint32_t device_index, const int global_work_size, 
       const bool blocking);
     void runKernel2D(const uint32_t device_index, 
-      const jtil::math::Int2& global_work_size, const bool blocking);
+      const jcl::math::Int2& global_work_size, const bool blocking);
     void runKernel3D(const uint32_t device_index, 
-      const jtil::math::Int3& global_work_size, const bool blocking);
+      const jcl::math::Int3& global_work_size, const bool blocking);
     void sync(const uint32_t device_index);  // Blocking until queue is empty
 
     void getOptimalLocalWorkgroupSizes1D(const uint32_t device_index,

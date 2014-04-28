@@ -15,6 +15,27 @@
     <Filter Include="Source Files\jcl">
       <UniqueIdentifier>{693f1d01-679b-4f5b-9270-943fffb65f09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\jcl\data_str">
+      <UniqueIdentifier>{f7d4f5f0-bafa-465e-b938-e92b8379a485}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\jcl\string_util">
+      <UniqueIdentifier>{a8bc8a0d-5a74-42ce-831f-71e6f55a6680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\jcl\math">
+      <UniqueIdentifier>{3747e573-3765-45a0-b95f-98b063695e7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\jcl\math">
+      <UniqueIdentifier>{fd4bcea3-319b-43db-8bb4-ac31ec7c1a46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\jcl\alignment">
+      <UniqueIdentifier>{d60ec02a-7f7e-423b-bfea-d75f668ba71e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\jcl\data_str">
+      <UniqueIdentifier>{ff179a39-8fc0-4465-809a-8a85717c0611}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\jcl\string_util">
+      <UniqueIdentifier>{9a53f332-2a6c-4da2-8dcb-7cc2b6dba6e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\jcl\cl_include.h">
@@ -35,6 +56,45 @@
     <ClInclude Include="include\jcl\jcl.h">
       <Filter>Header Files\jcl</Filter>
     </ClInclude>
+    <ClInclude Include="include\jcl\data_str\hash_funcs.h">
+      <Filter>Header Files\jcl\data_str</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\string_util\macros.h">
+      <Filter>Header Files\jcl\string_util</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\math\int_types.h">
+      <Filter>Header Files\jcl\math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\data_str\vector_managed.h">
+      <Filter>Header Files\jcl\data_str</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\data_str\hash_map_managed.h">
+      <Filter>Header Files\jcl\data_str</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\data_str\vector.h">
+      <Filter>Header Files\jcl\data_str</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\data_str\pair.h">
+      <Filter>Header Files\jcl\data_str</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\math\math_base.h">
+      <Filter>Header Files\jcl\math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\alignment\data_align.h">
+      <Filter>Header Files\jcl\alignment</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\math\math_types.h">
+      <Filter>Header Files\jcl\math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\math\vec3.h">
+      <Filter>Header Files\jcl\math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\math\vec2.h">
+      <Filter>Header Files\jcl\math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jcl\string_util\md5_jcl.h">
+      <Filter>Header Files\jcl\string_util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\jcl\opencl_buffer_data.cpp">
@@ -52,8 +112,20 @@
     <ClCompile Include="src\jcl\jcl.cpp">
       <Filter>Source Files\jcl</Filter>
     </ClCompile>
+    <ClCompile Include="src\jcl\math\math_base.cpp">
+      <Filter>Source Files\jcl\math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\jcl\data_str\hash_funcs.cpp">
+      <Filter>Source Files\jcl\data_str</Filter>
+    </ClCompile>
+    <ClCompile Include="src\jcl\string_util\md5c_jcl.c">
+      <Filter>Source Files\jcl\string_util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="JCL_COMPILE_NOTES.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

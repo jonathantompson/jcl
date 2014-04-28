@@ -14,10 +14,10 @@
 #include "jcl/jcl.h"
 #include "jcl/opencl_kernel.h"
 #include "jcl/opencl_buffer_data.h"
-#include "jtil/data_str/hash_map_managed.h"
-#include "jtil/data_str/vector_managed.h"
-#include "jtil/data_str/vector.h"
-#include "jtil/exceptions/wruntime_error.h"
+#include "jcl/data_str/hash_map_managed.h"
+#include "jcl/data_str/vector_managed.h"
+#include "jcl/data_str/vector.h"
+#include "jcl/math/math_types.h"  // for jcl::math::Int2 and Int3
 
 #define OPENCL_KERNEL_STARTING_HASH_SIZE 11  // Make it a prime
 
@@ -33,9 +33,9 @@ namespace jcl {
     cl::Context context;
     std::vector<cl::Device> devices;
     std::vector<cl::CommandQueue> queues;
-    jtil::data_str::HashMapManaged<std::string, OpenCLProgram*>* programs;  // Stored by filename
-    jtil::data_str::HashMapManaged<std::string, OpenCLKernel*>* kernels;  // Stored by (filename + kernel)
-    jtil::data_str::VectorManaged<OpenCLBufferData*>* buffers;
+    jcl::data_str::HashMapManaged<std::string, OpenCLProgram*>* programs;  // Stored by filename
+    jcl::data_str::HashMapManaged<std::string, OpenCLKernel*>* kernels;  // Stored by (filename + kernel)
+    jcl::data_str::VectorManaged<OpenCLBufferData*>* buffers;
 
     static void CheckError(const cl_int err_code);
     static std::string GetCLErrorString(const cl::Error& err);
@@ -53,7 +53,7 @@ namespace jcl {
     CLDevice getDeviceType(const uint32_t device_index);
     uint32_t getMaxWorkgroupSize(const uint32_t device_index);
     void getMaxWorkitemSizes(const uint32_t device_index,
-      jtil::math::Int3& max_device_item_sizes);
+      jcl::math::Int3& max_device_item_sizes);
 
     // Memory management
     JCLBuffer allocateBuffer(const CLBufferType type,
@@ -78,18 +78,18 @@ namespace jcl {
     void runKernel1D(const uint32_t device_index, const int global_work_size, 
       const int local_work_size, const bool blocking);
     void runKernel2D(const uint32_t device_index, 
-      const jtil::math::Int2& global_work_size, 
-      const jtil::math::Int2& local_work_size, const bool blocking);
+      const jcl::math::Int2& global_work_size, 
+      const jcl::math::Int2& local_work_size, const bool blocking);
     void runKernel3D(const uint32_t device_index, 
-      const jtil::math::Int3& global_work_size, 
-      const jtil::math::Int3& local_work_size, const bool blocking);
+      const jcl::math::Int3& global_work_size, 
+      const jcl::math::Int3& local_work_size, const bool blocking);
     // Run commands to let OpenCL choose the local workgroup size
     void runKernel1D(const uint32_t device_index, const int global_work_size, 
       const bool blocking);
     void runKernel2D(const uint32_t device_index, 
-      const jtil::math::Int2& global_work_size, const bool blocking);
+      const jcl::math::Int2& global_work_size, const bool blocking);
     void runKernel3D(const uint32_t device_index, 
-      const jtil::math::Int3& global_work_size, const bool blocking);
+      const jcl::math::Int3& global_work_size, const bool blocking);
     void sync(const uint32_t device_index);  // Blocking until queue is empty
 
     void getOptimalLocalWorkgroupSizes1D(const uint32_t device_index,
@@ -103,8 +103,8 @@ namespace jcl {
   private:
     OpenCLProgram* cur_program_;
     OpenCLKernel* cur_kernel_;
-    jtil::data_str::Vector<int> devices_max_workgroup_size;
-    jtil::data_str::Vector<jtil::math::Int3> devices_max_workitem_size;
+    jcl::data_str::Vector<int> devices_max_workgroup_size_;
+    jcl::data_str::Vector<jcl::math::Int3> devices_max_workitem_size_;
 
     static bool getPlatform(const CLDevice device, const CLVendor vendor, 
       cl::Platform& return_platform);
@@ -122,7 +122,7 @@ namespace jcl {
   template <typename T>
   void OpenCLContext::setArg(const uint32_t index, const T& val) {
     if (!cur_kernel_) {
-      throw std::wruntime_error("OpenCLContext::setArg() - ERROR: You must "
+      throw std::runtime_error("OpenCLContext::setArg() - ERROR: You must "
         "call OpenCL::useKernel() first!");
     }
     cur_kernel_->setArg(index, val);
@@ -134,11 +134,11 @@ namespace jcl {
     const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw std::runtime_error("runKernelxD() - ERROR: Invalid "
         "device_index");
     }
     if ((uint32_t)buffer >= buffers->size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw std::runtime_error("runKernelxD() - ERROR: Invalid "
         "buffer");
     }
 #endif
@@ -150,7 +150,7 @@ namespace jcl {
         buf->width * buf->height * buf->depth * sizeof(data[0]), data, 
         NULL, &cur_event);
     } catch (cl::Error err) {
-      throw std::wruntime_error(std::string("enqueueWriteBuffer failed: ") +
+      throw std::runtime_error(std::string("enqueueWriteBuffer failed: ") +
         GetCLErrorString(err));
     }
     if (blocking) {
@@ -164,11 +164,11 @@ namespace jcl {
     const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw std::runtime_error("runKernelxD() - ERROR: Invalid "
         "device_index");
     }
     if ((uint32_t)buffer >= buffers->size()) {
-      throw std::wruntime_error("runKernelxD() - ERROR: Invalid "
+      throw std::runtime_error("runKernelxD() - ERROR: Invalid "
         "buffer");
     }
 #endif
@@ -180,7 +180,7 @@ namespace jcl {
         buf->width * buf->height * buf->depth * sizeof(data[0]), data, 
         NULL, &cur_event);
     } catch (cl::Error err) {
-      throw std::wruntime_error(std::string("enqueueReadBuffer failed: ") +
+      throw std::runtime_error(std::string("enqueueReadBuffer failed: ") +
         GetCLErrorString(err));
     }
     if (blocking) {

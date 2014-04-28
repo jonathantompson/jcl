@@ -11,11 +11,10 @@
 //  Alberto Lerner's code repository (I took his distributed computing class, 
 //  which was amazing), particularly the test unit stuff.
 
-#include "jtil/math/math_types.h"
-#include "jtil/math/math_base.h"
+#include "jcl/math/math_types.h"
+#include "jcl/math/math_base.h"
 #include "jcl/jcl.h"
-#include "jtil/clk/clk.h"
-#include "jtil/exceptions/wruntime_error.h"
+#include "clk/clk.h"
 
 // convolution_kernel.cl
 const char* conv_kernel_c_str =
@@ -42,8 +41,8 @@ const char* conv_kernel_c_str =
 "  pOutput[idxOut] = sum;"
 "}";
 
-using namespace jtil::math;
-using namespace jtil::clk;
+using namespace jcl::math;
+using namespace clk;
 using namespace jcl;
 
 TEST(OpenCLTests, TestConvolution) {
@@ -115,11 +114,11 @@ TEST(OpenCLTests, TestConvolution) {
       context->setArg(3, src_width);
       context->setArg(4, kernel_size);
 
-      jtil::math::Int2 global_worksize(dst_width, dst_height);
+      jcl::math::Int2 global_worksize(dst_width, dst_height);
       
       // Force a particular local worksize:
-      jtil::math::Int2 local_worksize(16, 16);
-      jtil::math::Int3 max_itemsize;
+      jcl::math::Int2 local_worksize(16, 16);
+      jcl::math::Int3 max_itemsize;
       context->getMaxWorkitemSizes(dev_id, max_itemsize);
       for (uint32_t i = 0; i < 2; i++) {
         local_worksize[i] = std::min<int32_t>(local_worksize[i],                                     
@@ -151,7 +150,7 @@ TEST(OpenCLTests, TestConvolution) {
     delete[] kernel;
     delete[] output;
     delete[] outputcl;
-  } catch (std::wruntime_error err) {
+  } catch (std::runtime_error err) {
     std::cout << "Exception thrown: " << err.what() << std::endl;
     EXPECT_TRUE(false);
   }
@@ -239,9 +238,9 @@ TEST(OpenCLTests, ProfileConvolution) {
       context->setArg(4, kernel_size);
   
       // Call it once to compile the kernel
-      jtil::math::Int2 global_worksize(dst_width, dst_height);
-      jtil::math::Int2 local_worksize(16, 16);
-      jtil::math::Int3 max_itemsize;
+      jcl::math::Int2 global_worksize(dst_width, dst_height);
+      jcl::math::Int2 local_worksize(16, 16);
+      jcl::math::Int3 max_itemsize;
       context->getMaxWorkitemSizes(dev_id, max_itemsize);
       for (uint32_t i = 0; i < 2; i++) {
         local_worksize[i] = std::min<int32_t>(local_worksize[i],                                     
@@ -256,23 +255,23 @@ TEST(OpenCLTests, ProfileConvolution) {
   
       double t0 = clk.getTime();
       for (uint32_t i = 0; i < num_repeats; i++) {
-        jtil::math::Int2 global_worksize(dst_width, dst_height);
+        jcl::math::Int2 global_worksize(dst_width, dst_height);
         context->runKernel2D(dev_id, global_worksize, local_worksize, false);
       }
       context->readFromBuffer(outputcl, dev_id, output_buffer, false);
       context->sync(dev_id);
       double t1 = clk.getTime();
-      std::cout << "OpenCL time (manual sizes) = " << (t1 - t0) << std::endl;
+      std::cout << "GPU time (manual sizes) = " << (t1 - t0) << std::endl;
   
       t0 = clk.getTime();
       for (uint32_t i = 0; i < num_repeats; i++) {
-        jtil::math::Int2 global_worksize(dst_width, dst_height);
+        jcl::math::Int2 global_worksize(dst_width, dst_height);
         context->runKernel2D(dev_id, global_worksize, false);
       }
       context->readFromBuffer(outputcl, dev_id, output_buffer, false);
       context->sync(dev_id);
       t1 = clk.getTime();
-      std::cout << "OpenCL time (opencl sizes) = " << (t1 - t0) << std::endl;
+      std::cout << "GPU time (opencl sizes) = " << (t1 - t0) << std::endl;
       
       delete context;
       delete outputcl;
@@ -283,7 +282,7 @@ TEST(OpenCLTests, ProfileConvolution) {
     delete kernel;
     delete output;
 
-  } catch (std::wruntime_error err) {
+  } catch (std::runtime_error err) {
     std::cout << "Exception thrown: " << err.what() << std::endl;
     EXPECT_TRUE(false);
   }

@@ -49,7 +49,6 @@ set(LIB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../lib/MAC_OS_X)
 
 set(INCLUDE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../include/MAC_OS_X)
 
-set(JTIL_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../jtil/include/)
 set(OPENCL_CPP_HEADER_INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/opencl_cpp_header/)
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++#
@@ -117,7 +116,6 @@ if(root_PRINT_SOURCE_FILES MATCHES true)
 endif()
 
 message( "INCLUDE DIRECTORIES:" )
-message( STATUS "jtil: " ${JTIL_INC_DIR} )
 message( STATUS "opencl_cpp_header: " ${OPENCL_CPP_HEADER_INC_DIR} )
 
 include_directories(
@@ -129,18 +127,6 @@ include_directories(
 message( "EXTRA_LIBS to be linked in: " ${EXTRA_LIBS} )
 
 add_library(${TARGET_NAME} STATIC ${JCL_CXX_SOURCE} ${JCL_CC_SOURCE} ${JCL_HEADER})
-
-if(NOT TARGET jtil)
-  set(BUILD_JTIL_TESTS false)
-  add_subdirectory( "${CMAKE_CURRENT_SOURCE_DIR}/../jtil/" "${CMAKE_CURRENT_BINARY_DIR}/jtil")
-endif()
-
-target_link_libraries(${TARGET_NAME} ${EXTRA_LIBS})
-if(BUILD MATCHES debug)
-    target_link_libraries(${TARGET_NAME} jtil_d)
-else()
-    target_link_libraries(${TARGET_NAME} jtil)
-endif()
 
 if(DEFINED BUILD_JCL_TESTS AND (BUILD_JCL_TESTS MATCHES false))
   message("Not building the jcl tests...")

@@ -3,14 +3,12 @@
 #include "jcl/opencl_program.h"
 #include "jcl/jcl.h"
 #include "jcl/opencl_context.h"
-#include "jtil/exceptions/wruntime_error.h"
-
 #define SAFE_DELETE(x) if (x != NULL) { delete x; x = NULL; }
 #define SAFE_FREE(x) if (x != NULL) { free(x); x = NULL; }
 #define SAFE_DELETE_ARR(x) if (x != NULL) { delete[] x; x = NULL; }
 
 using std::string;
-using std::wruntime_error;
+using std::runtime_error;
 
 namespace jcl {
 
@@ -29,7 +27,7 @@ namespace jcl {
     try {
       kernel_ = cl::Kernel(program_->program(), kernel_name_.c_str());
     } catch (cl::Error err) {
-      throw wruntime_error(string("cl::Kernel() failed: ") + 
+      throw runtime_error(string("cl::Kernel() failed: ") + 
         OpenCLContext::GetCLErrorString(err));
     }
   }
@@ -39,7 +37,7 @@ namespace jcl {
     try {
       kernel_.setArg(index, size, data);
     } catch (cl::Error err) {
-      throw wruntime_error(std::string("kernel_.setArgNull() failed: ") + 
+      throw runtime_error(std::string("kernel_.setArgNull() failed: ") + 
         OpenCLContext::GetCLErrorString(err));
     }
   }

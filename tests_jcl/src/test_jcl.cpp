@@ -10,18 +10,18 @@
 
 #include "test_convolution.h"
 
-#include "jtil/debug_util/debug_util.h"  // Must come last in .cpp with main
+#include "debug_util.h"  // Must come last in .cpp with main
 
 using std::cout;
 using std::endl;
 
 int main(int argc, char* argv[]) {
 #if defined(_DEBUG) || defined(DEBUG)
-  jtil::debug::EnableMemoryLeakChecks();
+  jcl::debug::EnableMemoryLeakChecks();
   #if defined(WIN32) || defined(_WIN32)
-  jtil::debug::EnableAggressiveMemoryLeakChecks();
+  jcl::debug::EnableAggressiveMemoryLeakChecks();
   #endif
-  // jtil::debug::SetBreakPointOnAlocation(2546);
+  // jcl::debug::SetBreakPointOnAlocation(2546);
 #endif
   int ret_val = RUN_TESTS(argc, argv);
 #ifdef _WIN32

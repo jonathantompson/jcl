@@ -14,7 +14,6 @@
 
 #include <string>
 #include "jcl/cl_include.h"
-#include "jtil/data_str/vector.h"
 
 namespace jcl {
 

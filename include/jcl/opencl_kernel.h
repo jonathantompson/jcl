@@ -14,8 +14,7 @@
 #include <sstream>
 #include <string>
 #include "jcl/cl_include.h"
-#include "jtil/data_str/vector.h"
-#include "jtil/exceptions/wruntime_error.h"
+#include "jcl/math/int_types.h"
 
 namespace jcl {
 
@@ -58,7 +57,7 @@ namespace jcl {
       // Instead let the user figure it out!
       std::stringstream ss;
       ss << "kernel_.setArg() failed: opencl error enum: " << err.err();
-      throw std::wruntime_error(ss.str());
+      throw std::runtime_error(ss.str());
     }
   }
 

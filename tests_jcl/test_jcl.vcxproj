@@ -56,14 +56,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_AMD64_;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\jtil\include;$(ProjectDir)\headers;$(ProjectDir)..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\headers;$(ProjectDir)..\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\jtil\build\$(Platform)\$(Configuration)\;$(ProjectDir)..\build\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>jcl_d.lib;jtil_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\build\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>jcl_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -82,15 +82,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_AMD64_;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\jtil\include;$(ProjectDir)\headers;$(ProjectDir)..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\headers;$(ProjectDir)..\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\jtil\build\$(Platform)\$(Configuration)\;$(ProjectDir)..\build\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>jcl.lib;jtil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\build\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>jcl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -101,10 +101,21 @@
     </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="headers\clk\clk.h" />
+    <ClInclude Include="headers\debug_util.h" />
     <ClInclude Include="headers\test_convolution.h" />
+    <ClInclude Include="headers\test_unit\log_message.h" />
+    <ClInclude Include="headers\test_unit\log_writer.h" />
+    <ClInclude Include="headers\test_unit\param_map.h" />
+    <ClInclude Include="headers\test_unit\test_unit.h" />
+    <ClInclude Include="headers\test_unit\test_util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\debug_util_win32.cpp" />
     <ClCompile Include="src\test_jcl.cpp" />
+    <ClCompile Include="src\test_unit\log_message.cpp" />
+    <ClCompile Include="src\test_unit\log_writer.cpp" />
+    <ClCompile Include="src\test_unit\param_map.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="convolution_kernel.cl" />

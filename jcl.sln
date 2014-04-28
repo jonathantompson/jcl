@@ -2,17 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jcl", "jcl.vcxproj", "{7DBA1597-6CC7-45CC-AC82-7B7C69F569C2}"
-	ProjectSection(ProjectDependencies) = postProject
-		{B6B147F5-C7F9-4E94-A58C-1B4855967A48} = {B6B147F5-C7F9-4E94-A58C-1B4855967A48}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_jcl", "tests_jcl\test_jcl.vcxproj", "{D30C11FE-7EBF-4D6D-BB45-6858B3CB4034}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7DBA1597-6CC7-45CC-AC82-7B7C69F569C2} = {7DBA1597-6CC7-45CC-AC82-7B7C69F569C2}
-		{B6B147F5-C7F9-4E94-A58C-1B4855967A48} = {B6B147F5-C7F9-4E94-A58C-1B4855967A48}
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jtil", "..\jtil\jtil.vcxproj", "{B6B147F5-C7F9-4E94-A58C-1B4855967A48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +22,6 @@ Global
 		{D30C11FE-7EBF-4D6D-BB45-6858B3CB4034}.Debug|x64.Build.0 = Debug|x64
 		{D30C11FE-7EBF-4D6D-BB45-6858B3CB4034}.Release|x64.ActiveCfg = Release|x64
 		{D30C11FE-7EBF-4D6D-BB45-6858B3CB4034}.Release|x64.Build.0 = Release|x64
-		{B6B147F5-C7F9-4E94-A58C-1B4855967A48}.Debug|x64.ActiveCfg = Debug|x64
-		{B6B147F5-C7F9-4E94-A58C-1B4855967A48}.Debug|x64.Build.0 = Debug|x64
-		{B6B147F5-C7F9-4E94-A58C-1B4855967A48}.Release|x64.ActiveCfg = Release|x64
-		{B6B147F5-C7F9-4E94-A58C-1B4855967A48}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
