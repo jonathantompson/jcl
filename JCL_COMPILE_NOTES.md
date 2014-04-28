@@ -13,6 +13,14 @@ Windows:
     - Name = OPENCL_LIB_DIR, Value = C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.5\lib\x64
     - Now download the hpp header from http://www.khronos.org/registry/cl/api/1.1/cl.hpp and put it in C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.5\include\CL
 
+- Compiling the library:
+    - open jcl.sln
+    - right click "test_jcl" in the Solution Explorer -> "Set as StartUp Project"
+    - From the file menu: DEBUG -> Start Debugging... (or press F5)
+    - TWO tests should run and at the end of each test there should be a "PASSED" printout.
+
 MAC OS X
  - Just run cmake and then build (all frameworks should be included).  
  - cl.hpp doesn't exist by default but there is a copy of it in the local directory opencl_cpp_header.
+
+
