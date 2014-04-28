@@ -341,7 +341,7 @@ namespace data_str {
       void ** temp = NULL;
       temp = reinterpret_cast<void**>(_aligned_malloc(capacity * 
                                                       sizeof(dummy), 
-                                                      ALIGNMENT));
+                                                      16));
 #else
       T** temp = new T*[capacity];
 #endif
