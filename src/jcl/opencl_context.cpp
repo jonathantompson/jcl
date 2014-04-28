@@ -69,8 +69,8 @@ namespace jcl {
       throw runtime_error(string("cl::Context() failed: ") + 
         GetCLErrorString(err));
     }
-    cout << "Created OpenCL Context: " << endl;
-    cout << " - vendor: " << platform.getInfo<CL_PLATFORM_VENDOR>();
+    cout << "\tCreated OpenCL Context: " << endl;
+    cout << "\t - vendor: " << platform.getInfo<CL_PLATFORM_VENDOR>();
     cout << endl;
   }
 
@@ -103,24 +103,24 @@ namespace jcl {
 
     try {
       for (uint32_t i = 0; i < devices.size(); i++) {
-        cout << " - device " << i << " CL_DEVICE_NAME: ";
+        cout << "\t - device " << i << " CL_DEVICE_NAME: ";
         cout << devices[i].getInfo<CL_DEVICE_NAME>() << endl;
-        cout << " - device " << i << " CL_DEVICE_VERSION: ";
+        cout << "\t - device " << i << " CL_DEVICE_VERSION: ";
         cout << devices[i].getInfo<CL_DEVICE_VERSION>() << endl;
-        cout << " - device " << i << " CL_DRIVER_VERSION: ";
+        cout << "\t - device " << i << " CL_DRIVER_VERSION: ";
         cout << devices[i].getInfo<CL_DRIVER_VERSION>() << endl;
-        cout << " - device " << i << " CL_DEVICE_MAX_COMPUTE_UNITS: ";
+        cout << "\t - device " << i << " CL_DEVICE_MAX_COMPUTE_UNITS: ";
         cout << devices[i].getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << endl;
-        cout << " - device " << i << " CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS: ";
+        cout << "\t - device " << i << " CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS: ";
         cout << devices[i].getInfo<CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS>() <<
                 endl;
-        cout << " - device " << i << " CL_DEVICE_MAX_WORK_GROUP_SIZE: ";
+        cout << "\t - device " << i << " CL_DEVICE_MAX_WORK_GROUP_SIZE: ";
         size_t max_size = devices[i].getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
         devices_max_workgroup_size_.pushBack((int)max_size);
         cout << devices_max_workgroup_size_[i] << endl;
-        cout << " - device " << i << " CL_DEVICE_GLOBAL_MEM_SIZE: ";
+        cout << "\t - device " << i << " CL_DEVICE_GLOBAL_MEM_SIZE: ";
         cout << devices[i].getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << endl;
-        cout << " - device " << i << " CL_DEVICE_MAX_WORK_ITEM_SIZES: ";
+        cout << "\t - device " << i << " CL_DEVICE_MAX_WORK_ITEM_SIZES: ";
         std::vector<size_t> item_sizes =
                 devices[i].getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
         devices_max_workitem_size_.pushBack(Int3((int32_t)item_sizes[0], 
@@ -215,18 +215,18 @@ namespace jcl {
       }
       
       if(platformID == -1) {
-        cout << "No compatible OpenCL platform found" << endl;
-        cout << "Devices attached to each platform:" << endl;
+        cout << "\tNo compatible OpenCL platform found" << endl;
+        cout << "\tDevices attached to each platform:" << endl;
         char* name = new char[1024];
         for (uint32_t i = 0; i < (uint32_t)platforms.size(); i++) {
-          cout << "Platform " << i << ": ";
+          cout << "\tPlatform " << i << ": ";
           cout << platforms[i].getInfo<CL_PLATFORM_VENDOR>() << endl;
           getPlatformDeviceIDsOfType(platforms[i], CL_DEVICE_TYPE_ALL, 
             devices);
           for (uint32_t j = 0; j < (uint32_t)devices.size(); j++) {
             CheckError(clGetDeviceInfo(devices[i], CL_DEVICE_NAME, 
               1023 * sizeof(name[0]), &name, NULL));
-            cout << " - device " << j << " name: " << name << endl;
+            cout << "\t - device " << j << " name: " << name << endl;
           }
         }
         delete[] name;
@@ -429,7 +429,7 @@ namespace jcl {
     cl::NDRange local_work(local_work_size);
     cl::Event cur_event;
     try {
-      std::cout << "runKernel error occured, global_work = [" << global_work[0]
+      std::cout << "\trunKernel error occured, global_work = [" << global_work[0]
         << "] (i=0), " << "local_work = [" << local_work[0] << "] (i=0)"
         << std::endl;
       queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
@@ -487,7 +487,7 @@ namespace jcl {
       queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
         offset, global_work, local_work, NULL, &cur_event);
     } catch (cl::Error err) {
-      std::cout << "runKernel error occured, global_work = [" <<
+      std::cout << "\trunKernel error occured, global_work = [" <<
         global_work[1] << ", " << global_work[0] << "] (i=0), " <<
         "local_work = [" << local_work[1] << ", " << local_work[0] << "] (i=0)"
         << std::endl;
@@ -547,7 +547,7 @@ namespace jcl {
       queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
         offset, global_work, local_work, NULL, &cur_event);
     } catch (cl::Error err) {
-      std::cout << "runKernel error occured, global_work = [" <<
+      std::cout << "\trunKernel error occured, global_work = [" <<
         global_work[2] << ", " << global_work[1] << ", " << global_work[0] <<
         "] (i=0), " << "local_work = [" << local_work[2] << ", " <<
         local_work[1] << ", " << local_work[0] << "] (i=0)" << std::endl;
@@ -592,7 +592,7 @@ namespace jcl {
       queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
         offset, global_work, local_work, NULL, &cur_event);
     } catch (cl::Error err) {
-      std::cout << "runKernel error occured, global_work = [" << global_work[0]
+      std::cout << "\trunKernel error occured, global_work = [" << global_work[0]
         << "] (i=0)," << std::endl;
       throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
@@ -623,7 +623,7 @@ namespace jcl {
       queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
         offset, global_work, local_work, NULL, &cur_event);
     } catch (cl::Error err) {
-      std::cout << "runKernel error occured, global_work = [" << global_work[1]
+      std::cout << "\trunKernel error occured, global_work = [" << global_work[1]
         << ", " << global_work[0] << "] (i=0)," << std::endl;
       throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
@@ -655,7 +655,7 @@ namespace jcl {
       queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
         offset, global_work, local_work, NULL, &cur_event);
     } catch (cl::Error err) {
-      std::cout << "runKernel error occured, global_work = [" <<
+      std::cout << "\trunKernel error occured, global_work = [" <<
         global_work[2] << ", " << global_work[1] << ", " << global_work[0] <<
         "] (i=0)," << std::endl;
       throw runtime_error(string("enqueueNDRangeKernel failed: ") + 

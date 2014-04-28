@@ -23,7 +23,7 @@ namespace jcl {
     vendor_ = vendor;
     strict_float_ = strict_float;
 
-    std::cout << "Creating OpenCL Context..." << std::endl;
+    std::cout << "\tCreating OpenCL Context..." << std::endl;
 
     // Aquire lock to prevent multiple initilizations:
     std::lock_guard<std::mutex> lock(context_lock_);
@@ -35,7 +35,7 @@ namespace jcl {
   }
 
   JCL::~JCL() {
-    std::cout << "Shutting down OpenCL Context..." << std::endl;
+    std::cout << "\tShutting down OpenCL Context..." << std::endl;
     SAFE_DELETE(context_);
   }
   

@@ -88,13 +88,13 @@ TEST(OpenCLTests, TestConvolution) {
     CLDevice dev[2] = {CLDeviceCPU, CLDeviceGPU};
     for (uint32_t d = 0; d < 2; d++) {
       if (!JCL::queryDeviceExists(dev[d], CLVendorAny)) {
-        std::cout << "OpenCL Device '" << d << "' does not exist. ";
-        std::cout << "Skipping test" << std::endl;
+        std::cout << "\tOpenCL Device '" << d << "' does not exist. ";
+        std::cout << "\tSkipping test" << std::endl;
         continue;
       }
       JCL* context = new JCL(dev[d], CLVendorAny);
       const uint32_t dev_id = 0;
-      std::cout << "Using OpenCL Device: " << context->getDeviceName(dev_id);
+      std::cout << "\tUsing OpenCL Device: " << context->getDeviceName(dev_id);
       std::cout << std::endl;
 
       // Initialize Buffers
@@ -138,7 +138,7 @@ TEST(OpenCLTests, TestConvolution) {
       for (uint32_t i = 0; i < dst_width * dst_height; i++) {
         EXPECT_APPROX_EQ(outputcl[i], output[i]);
         if (fabsf(outputcl[i] - output[i]) > 0.000001) {
-          std::cout << "Data mismatch on device " << d << "!" << std::endl;
+          std::cout << "\tData mismatch on device " << d << "!" << std::endl;
           // We only need to show one of these are wrong...
           break;
         }
@@ -151,7 +151,7 @@ TEST(OpenCLTests, TestConvolution) {
     delete[] output;
     delete[] outputcl;
   } catch (std::runtime_error err) {
-    std::cout << "Exception thrown: " << err.what() << std::endl;
+    std::cout << "\tException thrown: " << err.what() << std::endl;
     EXPECT_TRUE(false);
   }
 }
@@ -204,7 +204,7 @@ TEST(OpenCLTests, ProfileConvolution) {
         input[uv] += output[uv];
       }
     }
-    std::cout << std::endl << "CPU time = " << cpu_t_accum << std::endl;
+    std::cout << std::endl << "\tCPU time = " << cpu_t_accum << std::endl;
 
     // Create an OpenCL context on the GPU if possible, otherwise the CPU
     JCL* context = NULL; 
@@ -217,7 +217,7 @@ TEST(OpenCLTests, ProfileConvolution) {
     }
     if ( context != NULL ) {
       const uint32_t dev_id = 0;
-      std::cout << "Using OpenCL Device: " << context->getDeviceName(dev_id);
+      std::cout << "\tUsing OpenCL Device: " << context->getDeviceName(dev_id);
       std::cout << std::endl;
   
       float* outputcl = new float[dst_width * dst_height];
@@ -261,7 +261,7 @@ TEST(OpenCLTests, ProfileConvolution) {
       context->readFromBuffer(outputcl, dev_id, output_buffer, false);
       context->sync(dev_id);
       double t1 = clk.getTime();
-      std::cout << "GPU time (manual sizes) = " << (t1 - t0) << std::endl;
+      std::cout << "\tGPU time (manual sizes) = " << (t1 - t0) << std::endl;
   
       t0 = clk.getTime();
       for (uint32_t i = 0; i < num_repeats; i++) {
@@ -271,7 +271,7 @@ TEST(OpenCLTests, ProfileConvolution) {
       context->readFromBuffer(outputcl, dev_id, output_buffer, false);
       context->sync(dev_id);
       t1 = clk.getTime();
-      std::cout << "GPU time (opencl sizes) = " << (t1 - t0) << std::endl;
+      std::cout << "\tGPU time (opencl sizes) = " << (t1 - t0) << std::endl;
       
       delete context;
       delete outputcl;
@@ -283,7 +283,7 @@ TEST(OpenCLTests, ProfileConvolution) {
     delete output;
 
   } catch (std::runtime_error err) {
-    std::cout << "Exception thrown: " << err.what() << std::endl;
+    std::cout << "\tException thrown: " << err.what() << std::endl;
     EXPECT_TRUE(false);
   }
 }

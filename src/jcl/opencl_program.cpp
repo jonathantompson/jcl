@@ -75,7 +75,7 @@ namespace jcl {
     }
 
     try {
-      std::cout << "Building program: " << filename_ << std::endl;
+      std::cout << "\tBuilding program: " << filename_ << std::endl;
 #if !defined(__APPLE__)
       const char* options = "-Werror";  // Make warnings into errors"
 #else
@@ -95,18 +95,16 @@ namespace jcl {
 #endif
       }
       if (options != NULL) {
-        std::cout << "   --> With options: " << options << std::endl;
+        std::cout << "\t --> With options: " << options << std::endl;
       }
       program_.build(devices, options);
-      std::cout << "   --> Finished building program" << std::endl;
+      std::cout << "\t --> Finished building program" << std::endl;
     } catch (cl::Error err) {
-      std::cout << "   --> Build failed for source: " << std::endl;
+      std::cout << "\t --> Build failed for source: " << std::endl;
       std::cout << code_ << std::endl;
-      // if (err.err() == CL_BUILD_PROGRAM_FAILURE) {
-			  string str = program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]);
-        std::cout << "ERROR: program_.build() failed." << std::endl;
-        std::cout << "    Program Info: " << str << std::endl;
-      // }
+			string str = program_.getBuildInfo<CL_PROGRAM_BUILD_LOG>(devices[0]);
+      std::cout << "ERROR: program_.build() failed." << std::endl;
+      std::cout << "    Program Info: " << str << std::endl;
       throw runtime_error(string("program_.build() failed: ") + 
         OpenCLContext::GetCLErrorString(err));
     }
