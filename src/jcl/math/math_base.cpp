@@ -49,7 +49,7 @@ namespace math {
       out_height != in_height - kernel_size + 1) {
       throw std::runtime_error("jcl::math::Convolve() - ERROR: "
         "Input/Output size mismatch!");
-    }
+   } 
     // From:
     // http://developer.amd.com/resources/heterogeneous-computing/opencl-zone/programming-in-opencl/image-convolution-using-opencl/
     #pragma omp parallel for num_threads(n_threads)
