@@ -124,6 +124,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <None Include="JCL_COMPILE_NOTES.md" />
   </ItemGroup>
 </Project>
