@@ -70,7 +70,7 @@ namespace jcl {
       const bool strict_float);
     void useKernelCStr(const char* kernel_c_str, const char* kernel_name,
                    const bool strict_float);
-    void setArg(const uint32_t index, const JCLBuffer buf);
+    void setArg(const uint32_t index, const JCLBuffer& buf);
     template <typename T>
     void setArg(const uint32_t index, const T& val);
     void setArg(const uint32_t index, const uint32_t size, void* data);

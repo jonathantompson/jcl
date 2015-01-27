@@ -130,6 +130,13 @@ namespace jcl {
     // kernel.
     int32_t queryMaxWorkgroupSizeForCurKernel(const uint32_t device_index);
 
+    // Query device and vendors
+    inline const CLDevice device() const { return device_; }
+    inline const CLVendor vendor() const { return vendor_; }
+
+    static std::string CLDeviceToString(const CLDevice device);
+    static std::string CLVendorToString(const CLVendor vendor);
+
   private:
     bool strict_float_;
     CLDevice device_;

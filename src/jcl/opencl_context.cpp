@@ -342,7 +342,7 @@ namespace jcl {
     }
   }
 
-  void OpenCLContext::setArg(const uint32_t index, const JCLBuffer val) {
+  void OpenCLContext::setArg(const uint32_t index, const JCLBuffer& val) {
     if (!cur_kernel_) {
       throw std::runtime_error("OpenCLContext::setArg() - ERROR: You must "
         "call OpenCL::useKernel() first!");

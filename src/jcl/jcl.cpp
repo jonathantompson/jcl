@@ -185,4 +185,36 @@ namespace jcl {
     return context_->queryMaxWorkgroupSizeForCurKernel(device_index);
   }
 
+  std::string JCL::CLDeviceToString(const CLDevice device) {
+    switch (device) {
+    case CLDeviceDefault:
+      return "CLDeviceDefault";
+    case CLDeviceAll:
+      return "CLDeviceAll";
+    case CLDeviceCPU:
+      return "CLDeviceCPU";
+    case CLDeviceGPU:
+      return "CLDeviceGPU";
+    case CLDeviceAccelerator:
+      return "CLDeviceDefault";
+    default:
+      throw std::runtime_error("Bad CLDevice");
+    }
+  }
+
+  std::string JCL::CLVendorToString(const CLVendor vendor) {
+    switch (vendor) {
+    case CLVendorAny:
+      return "CLVendorAny";
+    case CLDeviceNVidia:
+      return "CLDeviceNVidia";
+    case CLDeviceAMD:
+      return "CLDeviceAMD";
+    case CLDeviceIntel:
+      return "CLDeviceIntel";
+    default:
+      throw std::runtime_error("Bad CLVendor");
+    }
+  }
+
 }  // namespace jcl
