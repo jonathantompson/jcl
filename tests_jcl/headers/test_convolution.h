@@ -99,11 +99,11 @@ TEST(OpenCLTests, TestConvolution) {
 
       // Initialize Buffers
       JCLBuffer input_buffer = context->allocateBuffer(CLBufferTypeRead, 
-        src_width, src_height);
+        src_width * src_height);
       JCLBuffer kernel_buffer = context->allocateBuffer(CLBufferTypeRead, 
-        kernel_size, kernel_size);
+        kernel_size * kernel_size);
       JCLBuffer output_buffer = context->allocateBuffer(CLBufferTypeWrite, 
-        dst_width, dst_height);
+        dst_width * dst_height);
       context->writeToBuffer(input, dev_id, input_buffer, true);
       context->writeToBuffer(kernel, dev_id, kernel_buffer, true);
 
@@ -222,11 +222,11 @@ TEST(OpenCLTests, ProfileConvolution) {
   
       float* outputcl = new float[dst_width * dst_height];
       JCLBuffer input_buffer = context->allocateBuffer(CLBufferTypeRead, 
-        src_width, src_height);
+        src_width * src_height);
       JCLBuffer kernel_buffer = context->allocateBuffer(CLBufferTypeRead, 
-        kernel_size, kernel_size);
+        kernel_size * kernel_size);
       JCLBuffer output_buffer = context->allocateBuffer(CLBufferTypeWrite, 
-        dst_width, dst_height);
+        dst_width * dst_height);
       context->writeToBuffer(input, dev_id, input_buffer, true);
       context->writeToBuffer(kernel, dev_id, kernel_buffer, true);
   

@@ -66,8 +66,7 @@ namespace jcl {
       jcl::math::Int3& max_device_item_sizes);
 
     // allocateBuffer - Maps a new OpenCL buffer to the user memory at data
-    JCLBuffer allocateBuffer(const CLBufferType type, const uint32_t w, 
-      const uint32_t h = 1, const uint32_t d = 1);
+    JCLBuffer allocateBuffer(const CLBufferType type, const uint32_t nelems);
 
     // Read and Write a buffer to the specific device
     // --> Unfortunately, this cannot be templatized since it would expose 
@@ -102,8 +101,9 @@ namespace jcl {
     void setArg(const uint32_t index, const uint32_t size, void* data);
 
     // Enqueue the current Kernel
-    // global_work_size - Size of the array to work on (width * height)
-    // local_work_size - Local work group size (a good number is 32, but try many)
+    // global_work_size - Size of the array to work on (width, height, feats)
+    // local_work_size - Local work group size
+
     // Run commands to specify the local workgroup size:
     void runKernel1D(const uint32_t device_index, const int global_work_size, 
       const int local_work_size, const bool blocking);
@@ -113,6 +113,7 @@ namespace jcl {
     void runKernel3D(const uint32_t device_index, 
       const jcl::math::Int3& global_work_size, 
       const jcl::math::Int3& local_work_size, const bool blocking);
+
     // Run commands to let OpenCL choose the local workgroup size:
     void runKernel1D(const uint32_t device_index, const int global_work_size, 
       const bool blocking);

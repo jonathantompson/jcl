@@ -16,14 +16,12 @@ namespace jcl {
 
   struct OpenCLBufferData {
   public:
-    OpenCLBufferData(const CLBufferType type, const uint32_t w,
-      const uint32_t h, const uint32_t d, cl::Context& context);
+    OpenCLBufferData(const CLBufferType type, const uint32_t nelems,
+      cl::Context& context);
     ~OpenCLBufferData();
 
     cl::Buffer buffer;
-    const uint32_t width;
-    const uint32_t height;
-    const uint32_t depth;
+    const uint32_t nelems;  // ie width * height * feats
     const CLBufferType type;
 
     OpenCLBufferData& operator=(const OpenCLBufferData&);

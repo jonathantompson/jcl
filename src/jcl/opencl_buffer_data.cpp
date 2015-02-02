@@ -13,9 +13,8 @@ using std::endl;
 
 namespace jcl {
 
-  OpenCLBufferData::OpenCLBufferData(const CLBufferType type, const uint32_t w,
-    const uint32_t h, const uint32_t d, cl::Context& context) : width(w), 
-    height(h), depth(d), type(type){
+  OpenCLBufferData::OpenCLBufferData(const CLBufferType type, 
+    const uint32_t nelems, cl::Context& context) : nelems(nelems), type(type){
     //cl_mem_flags flags = CL_MEM_USE_HOST_PTR;
     cl_mem_flags flags = 0;
     switch (type) {
@@ -32,7 +31,13 @@ namespace jcl {
       throw runtime_error("OpenCLBufferData::OpenCLBufferData() - "
         "ERROR: Memory type not supported!");
     }
-    buffer = cl::Buffer(context, flags, sizeof(cl_float) * w * h * d);
+
+    if (nelems == 0) {
+      throw runtime_error("OpenCLBufferData::OpenCLBufferData() - "
+        "ERROR: Zero size buffer cannot be allocated!!");
+    }
+
+    buffer = cl::Buffer(context, flags, sizeof(cl_float) * nelems);
   }
 
   OpenCLBufferData::~OpenCLBufferData() {

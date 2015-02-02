@@ -283,10 +283,10 @@ namespace jcl {
     delete[] dev_ids;
   }
 
-  JCLBuffer OpenCLContext::allocateBuffer(const CLBufferType type,
-    const uint32_t w, const uint32_t h, const uint32_t d) {
+  JCLBuffer OpenCLContext::allocateBuffer(const CLBufferType type, 
+    const uint32_t nelems) {
     try {
-      buffers->pushBack(new OpenCLBufferData(type, w, h, d, context));
+      buffers->pushBack(new OpenCLBufferData(type, nelems, context));
       return (JCLBuffer)(buffers->size() - 1);
     } catch (cl::Error err) {
       throw runtime_error(string("allocateBuffer error: ") + 

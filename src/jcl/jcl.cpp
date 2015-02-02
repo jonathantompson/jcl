@@ -66,9 +66,9 @@ namespace jcl {
     return context_->getDeviceType(device_index);
   }
 
-  JCLBuffer JCL::allocateBuffer(const CLBufferType type,
-    const uint32_t w, const uint32_t h, const uint32_t d) {
-    return context_->allocateBuffer(type, w, h, d);
+  JCLBuffer JCL::allocateBuffer(const CLBufferType type, 
+    const uint32_t nelems) {
+    return context_->allocateBuffer(type, nelems);
   }
 
   void JCL::writeToBuffer(const float* data, const uint32_t device_index, 

@@ -56,8 +56,7 @@ namespace jcl {
       jcl::math::Int3& max_device_item_sizes);
 
     // Memory management
-    JCLBuffer allocateBuffer(const CLBufferType type,
-      const uint32_t w, const uint32_t h = 1, const uint32_t d = 1);
+    JCLBuffer allocateBuffer(const CLBufferType type, const uint32_t nelems);
     template <typename T>
     void writeToBuffer(const T* data, const uint32_t device_index, 
       const JCLBuffer buffer, const bool blocking);
@@ -69,11 +68,12 @@ namespace jcl {
     void useKernel(const char* filename, const char* kernel_name,
       const bool strict_float);
     void useKernelCStr(const char* kernel_c_str, const char* kernel_name,
-                   const bool strict_float);
+      const bool strict_float);
     void setArg(const uint32_t index, const JCLBuffer& buf);
     template <typename T>
     void setArg(const uint32_t index, const T& val);
     void setArg(const uint32_t index, const uint32_t size, void* data);
+
     // Run commands to specify the local workgroup size
     void runKernel1D(const uint32_t device_index, const int global_work_size, 
       const int local_work_size, const bool blocking);
@@ -83,6 +83,7 @@ namespace jcl {
     void runKernel3D(const uint32_t device_index, 
       const jcl::math::Int3& global_work_size, 
       const jcl::math::Int3& local_work_size, const bool blocking);
+
     // Run commands to let OpenCL choose the local workgroup size
     void runKernel1D(const uint32_t device_index, const int global_work_size, 
       const bool blocking);
@@ -147,7 +148,7 @@ namespace jcl {
     try {
       queues[device_index].enqueueWriteBuffer(buf->buffer, 
         blocking ? CL_TRUE : CL_FALSE, 0, 
-        buf->width * buf->height * buf->depth * sizeof(data[0]), data, 
+        buf->nelems * sizeof(data[0]), data, 
         NULL, &cur_event);
     } catch (cl::Error err) {
       throw std::runtime_error(std::string("enqueueWriteBuffer failed: ") +
@@ -177,7 +178,7 @@ namespace jcl {
     try {
       queues[device_index].enqueueReadBuffer(buf->buffer, 
         blocking ? CL_TRUE : CL_FALSE, 0, 
-        buf->width * buf->height * buf->depth * sizeof(data[0]), data, 
+        buf->nelems * sizeof(data[0]), data, 
         NULL, &cur_event);
     } catch (cl::Error err) {
       throw std::runtime_error(std::string("enqueueReadBuffer failed: ") +
