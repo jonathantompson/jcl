@@ -18,6 +18,7 @@
 
 #include <stdio.h>  // For printf()
 #include "jcl/math/int_types.h"  // for uint
+#include "jcl/alignment/data_align.h"
 
 namespace jcl {
 namespace data_str {

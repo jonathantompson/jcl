@@ -37,13 +37,6 @@
   #define LOOSE_DEPSILON 0.00000000001
 #endif
 
-// This library uses the convention of column vectors (so vectors on the RHS
-// of matricies).  This is true regardless of whether ROW_MAJOR or COLUMN_MAJOR
-// is defined.
-
-#include "jcl/math/vec2.h"
-#include "jcl/math/vec3.h"
-
 #ifndef M_E
   #define M_E     2.71828182845904523536
 #endif
@@ -73,22 +66,6 @@
 #ifndef MAX_UINT64
   #define MAX_UINT64 0xffffffffffffffff
 #endif
-
-namespace jcl {
-namespace math {
-
-  typedef Vec2<int32_t> Int2;
-  typedef Vec2<uint32_t> Uint2;
-  typedef Vec2<float> Float2;
-  typedef Vec2<double> Double2;
-
-  typedef Vec3<int32_t> Int3;
-  typedef Vec3<uint32_t> Uint3;
-  typedef Vec3<float> Float3;
-  typedef Vec3<double> Double3;
-
-};  // namespace math
-};  // namespace jcl
 
 #if defined(WIN32) || defined(_WIN32)
   #define RAND_ENGINE std::tr1::mt19937

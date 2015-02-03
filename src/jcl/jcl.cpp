@@ -10,7 +10,6 @@ using std::runtime_error;
 using std::string;
 using std::cout;
 using std::endl;
-using namespace jcl::math;
 
 namespace jcl {
 
@@ -57,9 +56,8 @@ namespace jcl {
     return context_->getMaxWorkgroupSize(device_index);
   }
 
-  void JCL::getMaxWorkitemSizes(const uint32_t device_index, 
-    jcl::math::Int3& max_device_item_sizes) {
-    context_->getMaxWorkitemSizes(device_index, max_device_item_sizes);
+  uint32_t JCL::getMaxWorkitemSize(const uint32_t device_index, const uint32_t dim) {
+    return context_->getMaxWorkitemSize(device_index, dim);
   }
 
   CLDevice JCL::getDeviceType(const uint32_t device_index) {
@@ -135,53 +133,24 @@ namespace jcl {
     context_->setArg(index, size, data);
   }
 
-  void JCL::runKernel1D(const uint32_t device_index, 
-    const int global_work_size, const int local_work_size, 
-    const bool blocking) {
-    context_->runKernel1D(device_index, global_work_size, local_work_size, 
-      blocking);
-  }
-
-  void JCL::runKernel2D(const uint32_t device_index, 
-    const Int2& global_work_size, const Int2& local_work_size, 
-    const bool blocking) {
-    context_->runKernel2D(device_index, global_work_size, local_work_size, 
-      blocking);
-  }
-
-  void JCL::runKernel3D(const uint32_t device_index, 
-    const Int3& global_work_size, const Int3& local_work_size, 
-    const bool blocking) {
-    context_->runKernel3D(device_index, global_work_size, local_work_size, 
-      blocking);
+  void JCL::runKernel(const uint32_t device_index, 
+    const uint32_t dim,  const uint32_t* global_work_size, 
+    const uint32_t* local_work_size, const bool blocking) {
+    context_->runKernel(device_index, dim, global_work_size, 
+      local_work_size, blocking);
   }
 
   void JCL::sync(const uint32_t device_index) {
     context_->sync(device_index);
   }
 
-  void JCL::runKernel1D(const uint32_t device_index, 
-    const int global_work_size, const bool blocking) {
-    context_->runKernel1D(device_index, global_work_size, blocking);
+  void JCL::runKernel(const uint32_t device_index, 
+    const uint32_t dim, const uint32_t* global_work_size, 
+    const bool blocking) {
+    context_->runKernel(device_index, dim, global_work_size, blocking);
   }
 
-  void JCL::runKernel2D(const uint32_t device_index, 
-    const Int2& global_work_size, const bool blocking) {
-    context_->runKernel2D(device_index, global_work_size, blocking);
-  }
-
-  void JCL::runKernel3D(const uint32_t device_index, 
-    const Int3& global_work_size, const bool blocking) {
-    context_->runKernel3D(device_index, global_work_size, blocking);
-  }
-
-  void JCL::getOptimalLocalWorkgroupSizes1D(const uint32_t device_index,
-    const int global_workgroup, int& local_workgroup) {
-    context_->getOptimalLocalWorkgroupSizes1D(device_index, global_workgroup,
-      local_workgroup);
-  }
-
-  int32_t JCL::queryMaxWorkgroupSizeForCurKernel(const uint32_t device_index) {
+  uint32_t JCL::queryMaxWorkgroupSizeForCurKernel(const uint32_t device_index) {
     return context_->queryMaxWorkgroupSizeForCurKernel(device_index);
   }
 

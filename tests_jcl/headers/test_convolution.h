@@ -114,17 +114,20 @@ TEST(OpenCLTests, TestConvolution) {
       context->setArg(3, src_width);
       context->setArg(4, kernel_size);
 
-      jcl::math::Int2 global_worksize(dst_width, dst_height);
+      uint32_t dim = 2;
+      uint32_t global_worksize[2] = {dst_width, dst_height};
       
       // Force a particular local worksize:
-      jcl::math::Int2 local_worksize(16, 16);
-      jcl::math::Int3 max_itemsize;
-      context->getMaxWorkitemSizes(dev_id, max_itemsize);
+      uint32_t local_worksize[2] = {16, 16};
+      uint32_t max_itemsize[3];
+      for (uint32_t i = 0; i < 3; i++) {
+        max_itemsize[i] = context->getMaxWorkitemSize(dev_id, i);
+      }
       for (uint32_t i = 0; i < 2; i++) {
         local_worksize[i] = std::min<int32_t>(local_worksize[i],                                     
           max_itemsize[i]);
       }
-      context->runKernel2D(dev_id, global_worksize, local_worksize, true);
+      context->runKernel(dev_id, dim, global_worksize, local_worksize, true);
       
       // Let OpenCL choose the local worksize
       // context->runKernel2D(dev_id, global_worksize, true);
@@ -238,25 +241,30 @@ TEST(OpenCLTests, ProfileConvolution) {
       context->setArg(4, kernel_size);
   
       // Call it once to compile the kernel
-      jcl::math::Int2 global_worksize(dst_width, dst_height);
-      jcl::math::Int2 local_worksize(16, 16);
-      jcl::math::Int3 max_itemsize;
-      context->getMaxWorkitemSizes(dev_id, max_itemsize);
+
+      uint32_t dim = 2;
+      uint32_t global_worksize[2] = {dst_width, dst_height};
+      
+      // Force a particular local worksize:
+      uint32_t local_worksize[2] = {16, 16};
+      uint32_t max_itemsize[3];
+      for (uint32_t i = 0; i < 3; i++) {
+        max_itemsize[i] = context->getMaxWorkitemSize(dev_id, i);
+      }
       for (uint32_t i = 0; i < 2; i++) {
         local_worksize[i] = std::min<int32_t>(local_worksize[i],                                     
           max_itemsize[i]);
       }
-      context->runKernel2D(dev_id, global_worksize, local_worksize, true);
+      context->runKernel(dev_id, dim, global_worksize, local_worksize, true);
       context->sync(dev_id);
   
       // Try one where we let OpenCL choose the workgroup size
-      context->runKernel2D(dev_id, global_worksize, true);
+      context->runKernel(dev_id, dim, global_worksize, true);
       context->sync(dev_id);
   
       double t0 = clk.getTime();
       for (uint32_t i = 0; i < num_repeats; i++) {
-        jcl::math::Int2 global_worksize(dst_width, dst_height);
-        context->runKernel2D(dev_id, global_worksize, local_worksize, false);
+        context->runKernel(dev_id, dim, global_worksize, local_worksize, false);
       }
       context->readFromBuffer(outputcl, dev_id, output_buffer, false);
       context->sync(dev_id);
@@ -265,8 +273,7 @@ TEST(OpenCLTests, ProfileConvolution) {
   
       t0 = clk.getTime();
       for (uint32_t i = 0; i < num_repeats; i++) {
-        jcl::math::Int2 global_worksize(dst_width, dst_height);
-        context->runKernel2D(dev_id, global_worksize, false);
+        context->runKernel(dev_id, dim, global_worksize, false);
       }
       context->readFromBuffer(outputcl, dev_id, output_buffer, false);
       context->sync(dev_id);

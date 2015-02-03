@@ -123,8 +123,12 @@ namespace jcl {
         cout << "\t - device " << i << " CL_DEVICE_MAX_WORK_ITEM_SIZES: ";
         std::vector<size_t> item_sizes =
                 devices[i].getInfo<CL_DEVICE_MAX_WORK_ITEM_SIZES>();
-        devices_max_workitem_size_.pushBack(Int3((int32_t)item_sizes[0], 
-          (int32_t)item_sizes[1], (int32_t)item_sizes[2]));
+        uint32_t* item_sizes_arr = new uint32_t[3];
+        item_sizes_arr[0] = (uint32_t)item_sizes[0];
+        item_sizes_arr[1] = (uint32_t)item_sizes[1];
+        item_sizes_arr[2] = (uint32_t)item_sizes[2];
+        // Note: The c_arr ownership is transferred to VectorManaged
+        devices_max_workitem_size_.pushBack(item_sizes_arr);
         std::cout << "(i=2) ";
         for (int32_t j = 2; j >= 0; j--) {
           std::cout << item_sizes[j] << " ";
@@ -158,9 +162,9 @@ namespace jcl {
     return devices_max_workgroup_size_[i];
   }
 
-  void OpenCLContext::getMaxWorkitemSizes(const uint32_t i, 
-    Int3& max_device_item_sizes) {
-    max_device_item_sizes.set(devices_max_workitem_size_[i]);
+  uint32_t OpenCLContext::getMaxWorkitemSize(const uint32_t device_index, 
+    const uint32_t dim) {
+    return devices_max_workitem_size_[device_index][dim];
   }
 
   std::string OpenCLContext::getDeviceName(const uint32_t device_index) {
@@ -373,7 +377,7 @@ namespace jcl {
     }
   }
 
-  int32_t OpenCLContext::queryMaxWorkgroupSizeForCurKernel(
+  uint32_t OpenCLContext::queryMaxWorkgroupSizeForCurKernel(
     const uint32_t device_index) {
     if (cur_kernel_ == NULL) {
       throw std::runtime_error("queryMaxWorkgroupSizeForCurKernel() - ERROR: "
@@ -391,209 +395,73 @@ namespace jcl {
       throw std::runtime_error("queryMaxWorkgroupSizeForCurKernel() - ERROR: "
         "Failed querying the max workgroup size for this kernel and device!");
     }
-    return (int32_t)max_workgroup_size;
+    return (uint32_t)max_workgroup_size;
   }
 
-  void OpenCLContext::runKernel1D(const uint32_t device_index, 
-    const int global_work_size, const int local_work_size, 
-    const bool blocking) {
+  void OpenCLContext::runKernel(const uint32_t device_index, 
+    const uint32_t dim, const uint32_t* global_work_size, 
+    const uint32_t* local_work_size, const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
-      throw std::runtime_error("runKernelxD() - ERROR: Invalid "
+      throw std::runtime_error("runKernel() - ERROR: Invalid "
         "device_index");
     }
     if (cur_kernel_ == NULL) {
-      throw std::runtime_error("runKernelxD() - ERROR: Please call "
+      throw std::runtime_error("runKernel() - ERROR: Please call "
         "OpenCL::useKernel() first!");
     }
-    if ((global_work_size % local_work_size) != 0) {
-      throw std::runtime_error("runKernelxD() - ERROR: Global workgroup"
-        " size is not evenly divisible by the local work group size!");
+    if (dim <= 0 || dim > 3) {  // OpenCL doesn't support greater than 3 dims!
+      throw std::runtime_error("runKernel() - ERROR: Bad work dims!");
     }
-    if (local_work_size > (int)devices_max_workgroup_size_[device_index]) {
-      throw std::runtime_error("runKernelxD() - ERROR: Local workgroup"
-        " size is greater than CL_DEVICE_MAX_WORK_GROUP_SIZE!");
-    }
-    if (local_work_size > (int)devices_max_workitem_size_[device_index][0]) {
-      throw std::runtime_error("runKernelxD() - ERROR: Local workgroup"
-        " size is greater than devices_max_workitem_size_[0]!");
-    }
-    int32_t max_size = queryMaxWorkgroupSizeForCurKernel(device_index);
-    if (local_work_size > (int)max_size) {
-      throw std::runtime_error("runKernelxD() - ERROR: Local workgroup"
-        " size is greater than CL_KERNEL_WORK_GROUP_SIZE!");
-    }
-#endif
-    cl::NDRange offset = cl::NullRange;
-    cl::NDRange global_work(global_work_size);
-    cl::NDRange local_work(local_work_size);
-    cl::Event cur_event;
-    try {
-      std::cout << "\trunKernel error occured, global_work = [" << global_work[0]
-        << "] (i=0), " << "local_work = [" << local_work[0] << "] (i=0)"
-        << std::endl;
-      queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
-        offset, global_work, local_work, NULL, &cur_event);
-    } catch (cl::Error err) {
-      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
-        GetCLErrorString(err));
-    }
-
-    if (blocking) {
-      cur_event.wait();
-    }
-  }
-
-  void OpenCLContext::runKernel2D(const uint32_t device_index, 
-    const Int2& global_work_size, const Int2& local_work_size, 
-    const bool blocking) {
-#if defined(DEBUG) || defined(_DEBUG)
-    if (device_index >= devices.size()) {
-      throw runtime_error("runKernelxD() - ERROR: Invalid "
-        "device_index");
-    }
-    if (cur_kernel_ == NULL) {
-      throw runtime_error("runKernelxD() - ERROR: Please call "
-        "OpenCL::useKernel() first!");
-    }
-    if ((global_work_size[1] % local_work_size[1]) != 0 ||
-      (global_work_size[0] % local_work_size[0]) != 0) {
-      throw runtime_error("runKernelxD() - ERROR: Global workgroup"
-        " size is not evenly divisible by the local work group size!");
-    }
-    int32_t total_worksize = local_work_size[0] * local_work_size[1];
-    if (total_worksize > devices_max_workgroup_size_[device_index]) {
-      throw runtime_error("runKernelxD() - ERROR: Local workgroup"
-        " size is greater than CL_DEVICE_MAX_WORK_GROUP_SIZE!");
-    }
-    for (uint32_t i = 0; i < 2; i++) {
-      if (local_work_size[i] >
-          (int)devices_max_workitem_size_[device_index][i]) {
-        throw runtime_error("runKernelxD() - ERROR: A Local workgroup"
+    uint32_t total_worksize = 1;
+    for (uint32_t i = 0; i < dim; i++) {
+      if ((global_work_size[i] % local_work_size[i]) != 0) {
+        throw std::runtime_error("runKernel() - ERROR: Global workgroup"
+          " size is not evenly divisible by the local work group size!");
+      }
+      total_worksize *= local_work_size[i];
+      if (local_work_size[i] > (int)devices_max_workitem_size_[device_index][i]) {
+        throw std::runtime_error("runKernel() - ERROR: Local workgroup"
           " size is greater than devices_max_workitem_size_!");
       }
     }
-    int32_t max_size = queryMaxWorkgroupSizeForCurKernel(device_index);
-    if (total_worksize > (int)max_size) {
-      throw runtime_error("runKernelxD() - ERROR: Local workgroup"
-        " size is greater than CL_KERNEL_WORK_GROUP_SIZE!");
-    }
-#endif
-    cl::NDRange offset = cl::NullRange;
-    cl::NDRange global_work(global_work_size[0], global_work_size[1]);
-    cl::NDRange local_work(local_work_size[0], local_work_size[1]);
-    cl::Event cur_event;
-    try {
-      queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
-        offset, global_work, local_work, NULL, &cur_event);
-    } catch (cl::Error err) {
-      std::cout << "\trunKernel error occured, global_work = [" <<
-        global_work[1] << ", " << global_work[0] << "] (i=0), " <<
-        "local_work = [" << local_work[1] << ", " << local_work[0] << "] (i=0)"
-        << std::endl;
-      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
-        GetCLErrorString(err));
-    }
-
-    if (blocking) {
-      cur_event.wait();
-    }
-  }
-
-  void OpenCLContext::runKernel3D(const uint32_t device_index, 
-    const Int3& global_work_size, const Int3& local_work_size, 
-    const bool blocking) {
-#if defined(DEBUG) || defined(_DEBUG)
-    if (device_index >= devices.size()) {
-      throw runtime_error("runKernelxD() - ERROR: Invalid "
-        "device_index");
-    }
-    if (cur_kernel_ == NULL) {
-      throw runtime_error("runKernelxD() - ERROR: Please call "
-        "OpenCL::useKernel() first!");
-    }
-    if ((global_work_size[2] % local_work_size[2]) != 0 ||
-      (global_work_size[1] % local_work_size[1]) != 0 ||
-      (global_work_size[0] % local_work_size[0]) != 0) {
-      throw runtime_error("runKernelxD() - ERROR: Global workgroup"
-        " size is not evenly divisible by the local work group size!");
-    }
-    int32_t total_worksize = local_work_size[0] * local_work_size[1] *
-      local_work_size[2];
-    if (total_worksize > devices_max_workgroup_size_[device_index]) {
-      throw runtime_error("runKernelxD() - ERROR: Local workgroup"
+    if (total_worksize > (uint32_t)devices_max_workgroup_size_[device_index]) {
+      throw std::runtime_error("runKernel() - ERROR: Local workgroup"
         " size is greater than CL_DEVICE_MAX_WORK_GROUP_SIZE!");
     }
-    for (uint32_t i = 0; i < 3; i++) {
-      if (local_work_size[i] >
-          (int)devices_max_workitem_size_[device_index][i]) {
-        throw runtime_error("runKernelxD() - ERROR: A Local workgroup"
-          " size is greater than devices_max_workitem_size_!");
-      }
-    }
-    int32_t max_size = queryMaxWorkgroupSizeForCurKernel(device_index);
-    if (total_worksize > (int)max_size) {
-      throw runtime_error("runKernelxD() - ERROR: Local workgroup"
+    uint32_t max_size = queryMaxWorkgroupSizeForCurKernel(device_index);
+    if (total_worksize > (uint32_t)max_size) {
+      throw std::runtime_error("runKernel() - ERROR: Local workgroup"
         " size is greater than CL_KERNEL_WORK_GROUP_SIZE!");
     }
 #endif
+
     cl::NDRange offset = cl::NullRange;
-    cl::NDRange global_work(global_work_size[0], global_work_size[1], 
-      global_work_size[2]);
-    cl::NDRange local_work(local_work_size[0], local_work_size[1], 
-      local_work_size[2]);
+    cl::NDRange global_work;
+    cl::NDRange local_work;
+    switch (dim) {
+    case 1:
+      global_work = cl::NDRange(global_work_size[0]);
+      local_work = cl::NDRange(local_work_size[0]);
+      break;
+    case 2:
+      global_work = cl::NDRange(global_work_size[0], global_work_size[1]);
+      local_work = cl::NDRange(local_work_size[0], local_work_size[1]);
+      break;
+    case 3:
+      global_work = cl::NDRange(global_work_size[0], global_work_size[1], 
+        global_work_size[2]);
+      local_work = cl::NDRange(local_work_size[0], local_work_size[1], 
+        local_work_size[2]);
+      break;
+    default:
+      throw std::runtime_error("runKernel() - ERROR: Bad dim");
+    }
     cl::Event cur_event;
     try {
       queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
         offset, global_work, local_work, NULL, &cur_event);
     } catch (cl::Error err) {
-      std::cout << "\trunKernel error occured, global_work = [" <<
-        global_work[2] << ", " << global_work[1] << ", " << global_work[0] <<
-        "] (i=0), " << "local_work = [" << local_work[2] << ", " <<
-        local_work[1] << ", " << local_work[0] << "] (i=0)" << std::endl;
-      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
-        GetCLErrorString(err));
-    }
-
-    if (blocking) {
-      cur_event.wait(); 
-    }
-  }
-
-  void OpenCLContext::getOptimalLocalWorkgroupSizes1D(
-    const uint32_t device_index, const int global_workgroup, 
-    int& local_workgroup) {
-    local_workgroup = std::min<int>(global_workgroup, 
-      std::min<int>(devices_max_workgroup_size_[device_index],
-      devices_max_workitem_size_[device_index][0]));
-    // Find the smallest divisor: Might be slow if global_workgroup is prime
-    while (local_workgroup > 1 && global_workgroup % local_workgroup != 0) {
-      local_workgroup--;
-    }
-  }
-
-  void OpenCLContext::runKernel1D(const uint32_t device_index, 
-    const int global_work_size, const bool blocking) {
-#if defined(DEBUG) || defined(_DEBUG)
-    if (device_index >= devices.size()) {
-      throw runtime_error("runKernelxD() - ERROR: Invalid "
-        "device_index");
-    }
-    if (cur_kernel_ == NULL) {
-      throw runtime_error("runKernelxD() - ERROR: Please call "
-        "OpenCL::useKernel() first!");
-    }
-#endif
-    cl::NDRange offset = cl::NullRange;
-    cl::NDRange global_work(global_work_size);
-    cl::NDRange local_work = cl::NullRange;  // Let OpenCL Choose
-    cl::Event cur_event;
-    try {
-      queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
-        offset, global_work, local_work, NULL, &cur_event);
-    } catch (cl::Error err) {
-      std::cout << "\trunKernel error occured, global_work = [" << global_work[0]
-        << "] (i=0)," << std::endl;
       throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
     }
@@ -603,8 +471,8 @@ namespace jcl {
     }
   }
 
-  void OpenCLContext::runKernel2D(const uint32_t device_index, 
-    const Int2& global_work_size, const bool blocking) {
+  void OpenCLContext::runKernel(const uint32_t device_index, const uint32_t dim,
+    const uint32_t* global_work_size, const bool blocking) {
 #if defined(DEBUG) || defined(_DEBUG)
     if (device_index >= devices.size()) {
       throw runtime_error("runKernelxD() - ERROR: Invalid "
@@ -614,50 +482,32 @@ namespace jcl {
       throw runtime_error("runKernelxD() - ERROR: Please call "
         "OpenCL::useKernel() first!");
     }
+    if (dim <= 0 || dim > 3) {  // OpenCL doesn't support greater than 3 dims!
+      throw std::runtime_error("runKernel() - ERROR: Bad work dims!");
+    }
 #endif
     cl::NDRange offset = cl::NullRange;
-    cl::NDRange global_work(global_work_size[0], global_work_size[1]);
+    cl::NDRange global_work;
     cl::NDRange local_work = cl::NullRange;  // Let OpenCL Choose
+    switch (dim) {
+    case 1:
+      global_work = cl::NDRange(global_work_size[0]);
+      break;
+    case 2:
+      global_work = cl::NDRange(global_work_size[0], global_work_size[1]);
+      break;
+    case 3:
+      global_work = cl::NDRange(global_work_size[0], global_work_size[1], 
+        global_work_size[2]);
+      break;
+    default:
+      throw std::runtime_error("runKernel() - ERROR: Bad dim");
+    }
     cl::Event cur_event;
     try {
       queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
         offset, global_work, local_work, NULL, &cur_event);
     } catch (cl::Error err) {
-      std::cout << "\trunKernel error occured, global_work = [" << global_work[1]
-        << ", " << global_work[0] << "] (i=0)," << std::endl;
-      throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
-        GetCLErrorString(err));
-    }
-
-    if (blocking) {
-      cur_event.wait();
-    }
-  }
-
-  void OpenCLContext::runKernel3D(const uint32_t device_index, 
-    const Int3& global_work_size, const bool blocking) {
-#if defined(DEBUG) || defined(_DEBUG)
-    if (device_index >= devices.size()) {
-      throw runtime_error("runKernelxD() - ERROR: Invalid "
-        "device_index");
-    }
-    if (cur_kernel_ == NULL) {
-      throw runtime_error("runKernelxD() - ERROR: Please call "
-        "OpenCL::useKernel() first!");
-    }
-#endif
-    cl::NDRange offset = cl::NullRange;
-    cl::NDRange global_work(global_work_size[0], global_work_size[1], 
-      global_work_size[2]);
-    cl::NDRange local_work = cl::NullRange;  // Let OpenCL Choose
-    cl::Event cur_event;
-    try {
-      queues[device_index].enqueueNDRangeKernel(cur_kernel_->kernel(),
-        offset, global_work, local_work, NULL, &cur_event);
-    } catch (cl::Error err) {
-      std::cout << "\trunKernel error occured, global_work = [" <<
-        global_work[2] << ", " << global_work[1] << ", " << global_work[0] <<
-        "] (i=0)," << std::endl;
       throw runtime_error(string("enqueueNDRangeKernel failed: ") + 
         GetCLErrorString(err));
     }

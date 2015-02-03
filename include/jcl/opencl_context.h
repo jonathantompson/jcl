@@ -52,8 +52,7 @@ namespace jcl {
     std::string getDeviceName(const uint32_t device_index);
     CLDevice getDeviceType(const uint32_t device_index);
     uint32_t getMaxWorkgroupSize(const uint32_t device_index);
-    void getMaxWorkitemSizes(const uint32_t device_index,
-      jcl::math::Int3& max_device_item_sizes);
+    uint32_t getMaxWorkitemSize(const uint32_t device_index, const uint32_t dim);
 
     // Memory management
     JCLBuffer allocateBuffer(const CLBufferType type, const uint32_t nelems);
@@ -75,37 +74,26 @@ namespace jcl {
     void setArg(const uint32_t index, const uint32_t size, void* data);
 
     // Run commands to specify the local workgroup size
-    void runKernel1D(const uint32_t device_index, const int global_work_size, 
-      const int local_work_size, const bool blocking);
-    void runKernel2D(const uint32_t device_index, 
-      const jcl::math::Int2& global_work_size, 
-      const jcl::math::Int2& local_work_size, const bool blocking);
-    void runKernel3D(const uint32_t device_index, 
-      const jcl::math::Int3& global_work_size, 
-      const jcl::math::Int3& local_work_size, const bool blocking);
+    void runKernel(const uint32_t device_index, const uint32_t dim, 
+      const uint32_t* global_work_size, const uint32_t* local_work_size, 
+      const bool blocking);
 
     // Run commands to let OpenCL choose the local workgroup size
-    void runKernel1D(const uint32_t device_index, const int global_work_size, 
-      const bool blocking);
-    void runKernel2D(const uint32_t device_index, 
-      const jcl::math::Int2& global_work_size, const bool blocking);
-    void runKernel3D(const uint32_t device_index, 
-      const jcl::math::Int3& global_work_size, const bool blocking);
-    void sync(const uint32_t device_index);  // Blocking until queue is empty
+    void runKernel(const uint32_t device_index, const uint32_t dim, 
+      const uint32_t* global_work_size, const bool blocking);
 
-    void getOptimalLocalWorkgroupSizes1D(const uint32_t device_index,
-      const int global_workgroup, int& local_workgroup);
+    void sync(const uint32_t device_index);  // Blocking until queue is empty
 
     // devices_max_workgroup_size is the max possible, each kernel might have
     // a specific maximum.  Use this to grab the max size for the compiled
     // kernel.
-    int32_t queryMaxWorkgroupSizeForCurKernel(const uint32_t device_index);
+    uint32_t queryMaxWorkgroupSizeForCurKernel(const uint32_t device_index);
 
   private:
     OpenCLProgram* cur_program_;
     OpenCLKernel* cur_kernel_;
     jcl::data_str::Vector<int> devices_max_workgroup_size_;
-    jcl::data_str::Vector<jcl::math::Int3> devices_max_workitem_size_;
+    jcl::data_str::VectorManaged<uint32_t*> devices_max_workitem_size_;
 
     static bool getPlatform(const CLDevice device, const CLVendor vendor, 
       cl::Platform& return_platform);

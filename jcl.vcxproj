@@ -127,9 +127,6 @@
     <ClInclude Include="include\jcl\math\int_types.h" />
     <ClInclude Include="include\jcl\math\math_base.h" />
     <ClInclude Include="include\jcl\math\math_types.h" />
-    <ClInclude Include="include\jcl\math\vec2.h" />
-    <ClInclude Include="include\jcl\math\vec3.h" />
-    <ClInclude Include="include\jcl\math\vec4.h" />
     <ClInclude Include="include\jcl\opencl_buffer_data.h" />
     <ClInclude Include="include\jcl\opencl_context.h" />
     <ClInclude Include="include\jcl\opencl_kernel.h" />
