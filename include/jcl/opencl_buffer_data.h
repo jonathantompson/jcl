@@ -12,6 +12,10 @@
 #include "jcl/cl_include.h"
 #include "jcl/jcl.h"
 
+#if defined(DEBUG) || defined(_DEBUG)
+  #define TRACK_ALLOCATIONS
+#endif
+
 namespace jcl {
 
   struct OpenCLBufferData {
@@ -20,13 +24,23 @@ namespace jcl {
       cl::Context& context);
     ~OpenCLBufferData();
 
-    cl::Buffer buffer;
     const uint32_t nelems;  // ie width * height * feats
     const CLBufferType type;
-
+    
     OpenCLBufferData& operator=(const OpenCLBufferData&);
 
+    void addReference();
+    void releaseReference();
+    static uint64_t nelems_allocated() { return nelems_allocated_; }
+    cl::Buffer& buffer();
+
   private:
+    std::vector<cl::Buffer> buffer_;  // Wrap in vector so we can release on demand
+    int32_t reference_count_;
+    static uint64_t nelems_allocated_;
+    static std::mutex lock_;
+    static void printAllocations(int64_t mem_allocated);  // negative on release
+
     // Non-copyable, non-assignable.
     OpenCLBufferData(OpenCLBufferData&);
   };

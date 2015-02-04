@@ -56,12 +56,15 @@ namespace jcl {
 
     // Memory management
     JCLBuffer allocateBuffer(const CLBufferType type, const uint32_t nelems);
+    void addReference(const JCLBuffer buffer);
+    void releaseReference(const JCLBuffer buffer);
     template <typename T>
     void writeToBuffer(const T* data, const uint32_t device_index, 
       const JCLBuffer buffer, const bool blocking);
     template <typename T>
     void readFromBuffer(T* data, const uint32_t device_index, 
       const JCLBuffer buffer, const bool blocking);
+    static uint64_t nelems_allocated() { return OpenCLBufferData::nelems_allocated(); }
 
     // Kernel setup and run
     void useKernel(const char* filename, const char* kernel_name,
@@ -134,7 +137,7 @@ namespace jcl {
     OpenCLBufferData* buf = (*buffers)[(uint32_t)buffer];
     cl::Event cur_event;
     try {
-      queues[device_index].enqueueWriteBuffer(buf->buffer, 
+      queues[device_index].enqueueWriteBuffer(buf->buffer(), 
         blocking ? CL_TRUE : CL_FALSE, 0, 
         buf->nelems * sizeof(data[0]), data, 
         NULL, &cur_event);
@@ -164,7 +167,7 @@ namespace jcl {
     OpenCLBufferData* buf = (*buffers)[(uint32_t)buffer];
     cl::Event cur_event;
     try {
-      queues[device_index].enqueueReadBuffer(buf->buffer, 
+      queues[device_index].enqueueReadBuffer(buf->buffer(), 
         blocking ? CL_TRUE : CL_FALSE, 0, 
         buf->nelems * sizeof(data[0]), data, 
         NULL, &cur_event);

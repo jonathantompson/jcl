@@ -69,6 +69,14 @@ namespace jcl {
     return context_->allocateBuffer(type, nelems);
   }
 
+  void JCL::releaseReference(const JCLBuffer buffer) {
+    context_->releaseReference(buffer);
+  }
+
+  void JCL::addReference(const JCLBuffer buffer) {
+    context_->addReference(buffer);
+  }
+
   void JCL::writeToBuffer(const float* data, const uint32_t device_index, 
     const JCLBuffer buffer, const bool blocking) {
     context_->writeToBuffer<float>(data, device_index, buffer, blocking);

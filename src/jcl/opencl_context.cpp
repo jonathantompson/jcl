@@ -298,6 +298,20 @@ namespace jcl {
     }
   }
 
+  void OpenCLContext::releaseReference(const JCLBuffer buffer) {
+    if (buffer >= buffers->size()) {
+      throw runtime_error("OpenCLContext::releaseReference: Invalid buffer id");
+    }
+    (*buffers)[buffer]->releaseReference();
+  }
+
+  void OpenCLContext::addReference(const JCLBuffer buffer) {
+    if (buffer >= buffers->size()) {
+      throw runtime_error("OpenCLContext::addReference: Invalid buffer id");
+    }
+    (*buffers)[buffer]->addReference();
+  }
+
   void OpenCLContext::useKernel(const char* filename, const char* kernel_name,
     const bool strict_float) {
     // Make sure the program is compiled
@@ -351,7 +365,7 @@ namespace jcl {
       throw std::runtime_error("OpenCLContext::setArg() - ERROR: You must "
         "call OpenCL::useKernel() first!");
     }
-    cur_kernel_->setArg(index, (*buffers)[(uint32_t)val]->buffer);
+    cur_kernel_->setArg(index, (*buffers)[(uint32_t)val]->buffer());
   }
 
   void OpenCLContext::setArg(const uint32_t index, const uint32_t size,

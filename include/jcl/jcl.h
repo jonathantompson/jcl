@@ -65,7 +65,13 @@ namespace jcl {
     uint32_t getMaxWorkitemSize(const uint32_t device_index, const uint32_t dim);
 
     // allocateBuffer - Maps a new OpenCL buffer to the user memory at data
+    //   and sets the reference count to the new buffer to "1".
     JCLBuffer allocateBuffer(const CLBufferType type, const uint32_t nelems);
+    // releaseReference - Decrement the reference count of the current buffer
+    //   and release it if the reference count goes to zero.
+    void releaseReference(const JCLBuffer buffer);
+    // addReference - Increment the reference count.
+    void addReference(const JCLBuffer buffer);
 
     // Read and Write a buffer to the specific device
     // --> Unfortunately, this cannot be templatized since it would expose 
