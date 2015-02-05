@@ -65,6 +65,7 @@ namespace jcl {
     void readFromBuffer(T* data, const uint32_t device_index, 
       const JCLBuffer buffer, const bool blocking);
     static uint64_t nelems_allocated() { return OpenCLBufferData::nelems_allocated(); }
+    cl_mem getCLMem(const JCLBuffer buffer);
 
     // Kernel setup and run
     void useKernel(const char* filename, const char* kernel_name,

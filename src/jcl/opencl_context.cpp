@@ -298,6 +298,13 @@ namespace jcl {
     }
   }
 
+  cl_mem OpenCLContext::getCLMem(const JCLBuffer buffer) {
+    if (buffer >= buffers->size()) {
+      throw runtime_error("OpenCLContext::getCLMem: Invalid buffer id");
+    }
+    return (*buffers)[buffer]->buffer()();
+  }
+
   void OpenCLContext::releaseReference(const JCLBuffer buffer) {
     if (buffer >= buffers->size()) {
       throw runtime_error("OpenCLContext::releaseReference: Invalid buffer id");

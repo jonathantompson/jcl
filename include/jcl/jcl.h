@@ -12,7 +12,7 @@
 //  using user mapped memory).  This means that you will be responsible for 
 //  calling writeBuffer and readBuffer to transfer memory manually.  According
 //  to the documentation, letting openCL manage memory is faster anyway.
-//  
+//
 
 #pragma once
 
@@ -131,6 +131,16 @@ namespace jcl {
 
     static std::string CLDeviceToString(const CLDevice device);
     static std::string CLVendorToString(const CLVendor vendor);
+
+    // ****************************************
+    // Methods to expose opencl API
+    // ****************************************
+    // Get the queue for device
+    void* queue(const uint32_t device_index);  
+    // Get the cl_mem reference for the buffer
+    void* getCLMem(const JCLBuffer buffer);
+    // Get the cl_int error string
+    static std::string getErrorString(const signed int err);
 
   private:
     bool strict_float_;
