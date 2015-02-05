@@ -75,7 +75,9 @@ namespace jcl {
     }
 
     try {
+#if defined(DEBUG) || defined(_DEBUG)
       std::cout << "\tBuilding program: " << filename_ << std::endl;
+#endif
 #if !defined(__APPLE__)
       const char* options = "-Werror";  // Make warnings into errors"
 #else
@@ -100,7 +102,9 @@ namespace jcl {
       }
 #endif
       program_.build(devices, options);
+#if defined(DEBUG) || defined(_DEBUG)
       std::cout << "\t --> Finished building program" << std::endl;
+#endif
     } catch (cl::Error err) {
       std::cout << "\t --> Build failed for source: " << std::endl;
       std::cout << code_ << std::endl;
